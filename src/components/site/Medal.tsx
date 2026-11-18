@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useReduceMotion } from "@/lib/useReduceMotion";
 import { Cpu, Crown, Flame, Heart, Lock, Sun, Target, Waves, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +32,7 @@ function scallop(cx: number, cy: number, r: number, teeth: number, depth: number
 export function Medal({ tier, unlocked, icon, size = 132, delay = 0, className }: { tier: TierName; unlocked: boolean; icon: ReactNode; size?: number; delay?: number; className?: string }) {
   const u = "md" + useId().replace(/[^a-zA-Z0-9]/g, "");
   const t = TIER[tier];
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const leaves = Array.from({ length: 11 }, (_, i) => {
     const ang = 200 + i * 14;
     return ang;

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useReduceMotion } from "@/lib/useReduceMotion";
 import { VAULT_ART } from "@/components/art/art";
 import { cn } from "@/lib/utils";
 
 /** A brushed-steel vault door (baked artwork) with a rotating gold handle wheel and a glass window for the balance. */
 export function VaultDoor({ children, className }: { children: ReactNode; className?: string }) {
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const [turns, setTurns] = useState(0);
   return (
     <div className={cn("group relative mx-auto aspect-square w-full max-w-[560px]", className)}>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReduceMotion } from "@/lib/useReduceMotion";
 import { WORLD } from "@/components/art/worlds";
 import { WorldArt } from "@/components/art/WorldArt";
 import type { GameId } from "@/data/types";
@@ -18,7 +19,7 @@ const DURATION = 1.15;
  * held underneath until the iris has covered it.
  */
 export function WorldBackdrop({ gameId, origin, className }: { gameId: GameId; origin: Origin; className?: string }) {
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const at = `${origin.x.toFixed(1)}% ${origin.y.toFixed(1)}%`;
   const w = WORLD[gameId];
   // the accent ring only plays for a change of world, not on first paint

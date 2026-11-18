@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { useReduceMotion } from "@/lib/useReduceMotion";
 import { Radio, Star } from "lucide-react";
 import { GameTitle } from "@/components/art/GameTitle";
 import { WORLD } from "@/components/art/worlds";
@@ -43,7 +44,7 @@ function Row({ v, dir, className, children }: { v: { item: Variants }; dir: numb
  */
 export function FeaturedPanel({ game, dir, rich = false, className }: { game: Game; dir: 1 | -1; rich?: boolean; className?: string }) {
   const play = usePlay();
-  const reduce = !!useReducedMotion();
+  const reduce = useReduceMotion();
   const v = makeVariants(reduce);
   const w = WORLD[game.id];
   return (

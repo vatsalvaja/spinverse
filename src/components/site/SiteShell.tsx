@@ -31,6 +31,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const isHome = pathname === "/dashboard";
+  // the game screen is full-bleed: no site bar, guest banner or footer around the machine
+  const inGame = pathname.startsWith("/play/");
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -52,9 +54,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="sv-grain" aria-hidden />
         <div key={pathname} className="sv-route-bar fixed inset-x-0 top-0 z-[70] h-[2px] bg-gradient-to-r from-transparent via-gold-300 to-white" aria-hidden />
 
-        {!isHome && <HudNav onOpenMenu={() => setOpen(true)} menuOpen={open} onLogout={logout} />}
+        {!isHome && !inGame && <HudNav onOpenMenu={() => setOpen(true)} menuOpen={open} onLogout={logout} />}
 
-        {mode === "guest" && !isHome && (
+        {mode === "guest" && !isHome && !inGame && (
           <div className="pointer-events-none fixed inset-x-0 top-[50px] z-40 flex justify-center px-4 sm:top-[58px]">
             <p className="sv-glass pointer-events-auto rounded-full px-3.5 py-1 text-center text-[11px] text-gold-100 sm:text-xs">
               Guest session.{" "}
@@ -67,7 +69,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <PlayProvider>{children}</PlayProvider>
         </main>
 
-        {!isHome && (
+        {!isHome && !inGame && (
           <footer className="relative z-10 mx-auto max-w-[1320px] px-5 pb-6 pt-10 sm:px-8">
             <p className="text-[11px] leading-relaxed text-obsidian-300">
               SPINVERSE is entertainment only and uses virtual points. Points have no cash value, can’t be purchased with real money, and can’t be withdrawn or exchanged. 18+.

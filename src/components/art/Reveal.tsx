@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useReduceMotion } from "@/lib/useReduceMotion";
 import type { ReactNode } from "react";
 
 /** Scroll reveal that is skipped for reduced-motion users. */
 export function Reveal({ children, delay = 0, className, y = 28 }: { children: ReactNode; delay?: number; className?: string; y?: number }) {
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   return (
     <motion.div
       className={className}

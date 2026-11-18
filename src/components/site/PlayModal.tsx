@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, X } from "lucide-react";
 import { GameTitle } from "@/components/art/GameTitle";
@@ -19,14 +20,20 @@ export function PlayProvider({ children }: { children: ReactNode }) {
   const [gameId, setGameId] = useState<GameId | null>(null);
   const [progress, setProgress] = useState(0);
   const { markPlayed, favorites, toggleFavorite } = useSession();
+  const router = useRouter();
 
   const play = useCallback(
     (id: GameId) => {
       markPlayed(id);
+      // Pharaoh’s Fortune has its own playable screen; the other worlds keep the launch preview for now.
+      if (id === "pharaohs-fortune") {
+        router.push("/play/pharaohs-fortune");
+        return;
+      }
       setProgress(0);
       setGameId(id);
     },
-    [markPlayed],
+    [markPlayed, router],
   );
   const value = useMemo(() => ({ play }), [play]);
 
