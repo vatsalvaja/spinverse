@@ -1,0 +1,39 @@
+import { Gauge, Layers, Orbit, Repeat, Sparkles, Sun, Waves, Zap, type LucideIcon } from "lucide-react";
+import type { GameId } from "@/data/types";
+
+export interface Feature {
+  title: string;
+  text: string;
+  icon: LucideIcon;
+}
+
+/** Plain-language feature notes for each launch world. Used by Explore and the detail screen. */
+export const FEATURES: Record<GameId, Feature[]> = {
+  "pharaohs-fortune": [
+    { title: "5×3 classic reels", text: "Five reels, three rows and the clean, readable play of a true classic.", icon: Layers },
+    { title: "Expanding wilds", text: "A wild that lands can stretch to fill its reel and light up more lines.", icon: Sun },
+    { title: "Free spins", text: "Find the hidden chamber to open a run of bonus spins.", icon: Sparkles },
+  ],
+  "atlantis-cascade": [
+    { title: "Cascades", text: "Winning symbols vanish and new ones tumble in, so a single spin can chain.", icon: Waves },
+    { title: "Rising multiplier", text: "Every step of a chain lifts the multiplier a little higher.", icon: Gauge },
+    { title: "Tumble wins", text: "A 6×5 grid gives the tide plenty of room to turn.", icon: Layers },
+  ],
+  "neon-overdrive": [
+    { title: "Hold & Respin", text: "Glowing orbs lock in place while the rest of the board respins.", icon: Repeat },
+    { title: "Orb tiers", text: "Each orb carries a point value that climbs through jackpot-style tiers.", icon: Orbit },
+    { title: "Turbo mode", text: "Shorter animations for players who like the night to move fast.", icon: Zap },
+  ],
+};
+
+/** Explore filters mapped onto the categories the three launch games actually have. */
+export const EXPLORE_FILTERS = [
+  { id: "all", label: "All games" },
+  { id: "classic", label: "Classic reels", category: "Classic Slots" },
+  { id: "cascade", label: "Cascade games", category: "Cascading Reels" },
+  { id: "bonus", label: "Bonus experiences", category: "Hold & Respin" },
+  { id: "recent", label: "Recently played" },
+  { id: "favorites", label: "Favorites" },
+] as const;
+
+export type ExploreFilter = (typeof EXPLORE_FILTERS)[number]["id"];
