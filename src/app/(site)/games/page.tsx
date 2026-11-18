@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Bell, ChevronDown, ChevronLeft, ChevronRight, Lock, Search, SearchX, X } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Search, SearchX, X } from "lucide-react";
 import { GameTitle } from "@/components/art/GameTitle";
 import { WORLD } from "@/components/art/worlds";
 import { LiveArt } from "@/components/art/WorldArt";
@@ -14,8 +14,7 @@ import { WorldBackdrop } from "@/components/console/WorldBackdrop";
 import { FavoriteButton } from "@/components/site/GameCard";
 import { usePlay } from "@/components/site/PlayModal";
 import { Btn, PlayButton } from "@/components/site/ui";
-import { useToast } from "@/components/ui/toast";
-import { COMING_SOON, GAMES, type Game } from "@/data/games";
+import { GAMES, type Game } from "@/data/games";
 import type { GameId } from "@/data/types";
 import { useSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
@@ -61,13 +60,11 @@ function CollectionCard({ game, index, on, onSelect }: { game: Game; index: numb
 }
 
 export default function ExplorePage() {
-  const toast = useToast();
   const { favorites, recent } = useSession();
   const { selected, origin, dir, select, step } = useConsole();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<ExploreFilter>("all");
   const [sort, setSort] = useState<(typeof SORTS)[number]["value"]>("popular");
-  const [notify, setNotify] = useState<string[]>([]);
   const rail = useRef<HTMLDivElement>(null);
 
   const matches = useCallback(
@@ -184,36 +181,6 @@ export default function ExplorePage() {
             </div>
           </section>
         )}
-
-        {/* what is arriving next */}
-        <section aria-label="Coming soon" className="pb-6">
-          <p className="px-1 text-[15px] font-semibold text-white">Opening soon</p>
-          <ul className="mt-3 grid gap-2.5 sm:grid-cols-3">
-            {COMING_SOON.map((c) => {
-              const on = notify.includes(c.id);
-              return (
-                <li key={c.id} className="relative flex items-center gap-3 overflow-hidden rounded-2xl border border-white/10 bg-black/45 p-3.5 backdrop-blur">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.06]"><Lock className="h-4 w-4 text-obsidian-200" /></span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-white">{c.name}</span>
-                    <span className="block truncate text-xs text-obsidian-200">{c.theme} · {c.eta}</span>
-                  </span>
-                  <Btn
-                    size="sm"
-                    variant={on ? "dark" : "outline"}
-                    aria-pressed={on}
-                    onClick={() => {
-                      setNotify((p) => (on ? p.filter((x) => x !== c.id) : [...p, c.id]));
-                      toast(on ? `Reminder removed for ${c.name}.` : `We’ll let you know when ${c.name} opens.`, "info");
-                    }}
-                  >
-                    <Bell className="h-3.5 w-3.5" /> {on ? "On" : "Remind me"}
-                  </Btn>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
       </div>
     </div>
   );

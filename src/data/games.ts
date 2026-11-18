@@ -85,8 +85,4 @@ export const GAMES: Game[] = [
 
 export const GAME_BY_ID: Record<GameId, Game> = Object.fromEntries(GAMES.map((g) => [g.id, g])) as Record<GameId, Game>;
 
-export const COMING_SOON = [
-  { id: "cs1", name: "Samurai Moonrise", theme: "Feudal Japan", eta: "Q1 2027" },
-  { id: "cs2", name: "Wild Frontier Gold", theme: "Old West", eta: "Q1 2027" },
-  { id: "cs3", name: "Aurora Reels", theme: "Arctic lights", eta: "Q2 2027" },
-];
+export const COMING_SOON: { id: string; name: string; theme: string; eta: string }[] = [];

@@ -34,6 +34,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  useEffect(() => {
+    const handleOpenUniverse = () => setOpen(true);
+    window.addEventListener("sv-open-universe-menu", handleOpenUniverse);
+    return () => window.removeEventListener("sv-open-universe-menu", handleOpenUniverse);
+  }, []);
+
   const logout = () => {
     signOut();
     setOpen(false);
@@ -46,9 +52,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="sv-grain" aria-hidden />
         <div key={pathname} className="sv-route-bar fixed inset-x-0 top-0 z-[70] h-[2px] bg-gradient-to-r from-transparent via-gold-300 to-white" aria-hidden />
 
-        <HudNav onOpenMenu={() => setOpen(true)} menuOpen={open} onLogout={logout} />
+        {!isHome && <HudNav onOpenMenu={() => setOpen(true)} menuOpen={open} onLogout={logout} />}
 
-        {mode === "guest" && (
+        {mode === "guest" && !isHome && (
           <div className="pointer-events-none fixed inset-x-0 top-[50px] z-40 flex justify-center px-4 sm:top-[58px]">
             <p className="sv-glass pointer-events-auto rounded-full px-3.5 py-1 text-center text-[11px] text-gold-100 sm:text-xs">
               Guest session.{" "}
