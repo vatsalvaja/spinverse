@@ -2,7 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
-  // Lets a verification build run next to a live dev server (NEXT_DIST_DIR=.next-check next build).
-  distDir: process.env.NEXT_DIST_DIR || ".next",
+  typescript: { ignoreBuildErrors: false },
+  // Only set custom distDir when NEXT_DIST_DIR is explicitly passed
+  // (prevents Vercel output directory conflicts where distDir='.next' causes deployment errors)
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
 };
 export default nextConfig;
