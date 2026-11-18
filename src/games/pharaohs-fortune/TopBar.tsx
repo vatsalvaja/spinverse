@@ -35,7 +35,7 @@ export function TopBar(p: TopBarProps) {
   return (
     <div className="relative z-30 grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 px-[clamp(8px,2vw,40px)]" style={{ height: "var(--top)" }}>
       <div>
-        <Link href="/games" aria-label="Back to lobby" className="inline-flex h-[clamp(34px,5.4dvh,48px)] items-center gap-2 rounded-full border border-[#d4af4f]/45 bg-gradient-to-b from-[#2a1c0a]/90 to-[#0d0804]/90 pl-3 pr-4 text-[clamp(12px,1.9dvh,15px)] font-semibold text-[#f6dc8e] shadow-[0_4px_12px_rgba(0,0,0,.6),inset_0_1px_0_rgba(255,236,170,.3)] backdrop-blur transition hover:border-[#f3cb62] hover:text-white active:scale-95">
+        <Link href="/dashboard" aria-label="Back to lobby" className="inline-flex h-[clamp(34px,5.4dvh,48px)] items-center gap-2 rounded-full border border-[#d4af4f]/45 bg-gradient-to-b from-[#2a1c0a]/90 to-[#0d0804]/90 pl-3 pr-4 text-[clamp(12px,1.9dvh,15px)] font-semibold text-[#f6dc8e] shadow-[0_4px_12px_rgba(0,0,0,.6),inset_0_1px_0_rgba(255,236,170,.3)] backdrop-blur transition hover:border-[#f3cb62] hover:text-white active:scale-95">
           <ArrowLeft className="h-4 w-4" /> <span className="hidden min-[420px]:inline">Back to Lobby</span>
         </Link>
       </div>

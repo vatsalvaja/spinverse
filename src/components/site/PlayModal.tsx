@@ -94,7 +94,7 @@ export function PlayProvider({ children }: { children: ReactNode }) {
                 <Btn variant="dark" onClick={() => toggleFavorite(game.id)}>
                   <Heart className={cn("h-4 w-4", fav && "fill-rose-400 text-rose-400")} /> {fav ? "Favorited" : "Add to favorites"}
                 </Btn>
-                <Btn onClick={() => setGameId(null)}>Back to the lobby</Btn>
+                <Btn onClick={() => { setGameId(null); router.push("/dashboard"); }}>Back to the lobby</Btn>
               </div>
             </div>
           </motion.div>

@@ -36,6 +36,14 @@ export function XboxDashboard({ onOpenUniverseMenu }: XboxDashboardProps) {
 
   const shelfContainerRef = useRef<HTMLDivElement>(null);
 
+  // Touch and swipe gesture tracking for mobile devices
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchDeltaX = useRef<number>(0);
+  const touchDeltaY = useRef<number>(0);
+  const isSwiping = useRef<boolean>(false);
+  const justSwipedRef = useRef<boolean>(false);
+
   const activeGame = XBOX_GAMES[selectedIndex] || XBOX_GAMES[0];
 
   // Switch selected game and update full-bleed wallpaper
@@ -50,6 +58,67 @@ export function XboxDashboard({ onOpenUniverseMenu }: XboxDashboardProps) {
       tileEl?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
   }, []);
+
+  // Ensure active tile is always comfortably centered on mobile / viewport
+  useEffect(() => {
+    if (shelfContainerRef.current) {
+      const tileEl = shelfContainerRef.current.children[selectedIndex] as HTMLElement | undefined;
+      tileEl?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [selectedIndex]);
+
+  // Touch handlers for mobile swipe navigation between games and wallpapers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaX.current = 0;
+    touchDeltaY.current = 0;
+    isSwiping.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const dx = currentX - touchStartX.current;
+    const dy = currentY - touchStartY.current;
+    touchDeltaX.current = dx;
+    touchDeltaY.current = dy;
+
+    // Recognize horizontal swipe gesture
+    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+      isSwiping.current = true;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null) return;
+    const dx = touchDeltaX.current;
+    const dy = touchDeltaY.current;
+    const minSwipeDistance = 30; // px threshold
+
+    if (isSwiping.current && Math.abs(dx) > minSwipeDistance && Math.abs(dx) > Math.abs(dy)) {
+      justSwipedRef.current = true;
+      setTimeout(() => {
+        justSwipedRef.current = false;
+      }, 300);
+
+      if (dx < 0) {
+        // Swiped Left -> Move to Next Game
+        selectGameIndex((selectedIndex + 1) % XBOX_GAMES.length);
+      } else {
+        // Swiped Right -> Move to Previous Game
+        selectGameIndex((selectedIndex - 1 + XBOX_GAMES.length) % XBOX_GAMES.length);
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchDeltaX.current = 0;
+    touchDeltaY.current = 0;
+    isSwiping.current = false;
+  };
 
   // Keyboard and gamepad navigation
   useEffect(() => {
@@ -176,94 +245,136 @@ export function XboxDashboard({ onOpenUniverseMenu }: XboxDashboardProps) {
 
       {/* 3. Main Console Stage */}
       <main className="relative z-10 flex min-h-screen flex-col justify-end px-4 pb-8 sm:px-8 lg:px-12 pt-20">
-        {/* Open hero space - background wallpaper stays simple, clean & unobstructed */}
-        <div className="flex-1 min-h-[140px] sm:min-h-[220px]" />
+        {/* Open hero space - background wallpaper stays simple, clean & unobstructed (swipeable on mobile) */}
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="flex-1 min-h-[140px] sm:min-h-[220px] touch-pan-y"
+        />
 
         {/* MIDDLE SHELF: Dynamic Horizontal Game Selection */}
-        <section aria-label="Game selection" className="w-full max-w-[1280px] mx-auto">
-              <div
-                tabIndex={0}
-                role="region"
-                aria-label="Recent games carousel"
-                className="w-full overflow-x-auto pb-3 pt-1 sv-scroll-x scroll-smooth focus:outline-none"
-              >
-                <div
-                  ref={shelfContainerRef}
-                  className="flex items-center gap-3 sm:gap-4 w-max mx-auto px-4"
-                >
-                  {XBOX_GAMES.map((game, i) => {
-                    const isSelected = selectedIndex === i;
+        <section
+          aria-label="Game selection"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="w-full max-w-[1280px] mx-auto touch-pan-y"
+        >
+          <div
+            role="region"
+            aria-label="Recent games carousel"
+            className="w-full overflow-x-auto pb-3 pt-1 sv-scroll-x scroll-smooth focus:outline-none touch-pan-y"
+          >
+            <div
+              ref={shelfContainerRef}
+              className="flex items-center gap-3 sm:gap-4 w-max mx-auto px-4"
+            >
+              {XBOX_GAMES.map((game, i) => {
+                const isSelected = selectedIndex === i;
 
-                    return (
-                      <div
-                        key={game.id}
-                        onClick={() => {
-                          setFocusZone("games");
-                          if (selectedIndex === i) {
-                            handleLaunchGame(game);
-                          } else {
-                            selectGameIndex(i);
-                          }
-                        }}
-                        onMouseEnter={() => {
-                          if (selectedIndex !== i) {
-                            selectGameIndex(i);
-                          }
-                        }}
-                        className={`group relative shrink-0 cursor-pointer transition-all duration-300 ease-out ${isSelected
-                            ? "scale-[1.04] sm:scale-[1.06] -translate-y-1 z-20"
-                            : "scale-100 hover:scale-[1.02] opacity-80 hover:opacity-100 z-10"
-                          }`}
-                        style={{
-                          width: isSelected ? "clamp(102px, 11vw, 128px)" : "clamp(82px, 8.8vw, 102px)",
-                        }}
-                      >
-                        {/* Tile Card Frame */}
-                        <div
-                          className={`relative aspect-square w-full overflow-hidden rounded-lg sm:rounded-xl bg-black/80 transition-all duration-300 ${isSelected
-                              ? "ring-[3px] ring-[#52b043] shadow-[0_0_24px_rgba(82,176,67,0.7)]"
-                              : "ring-1 ring-white/15 hover:ring-white/40"
-                            }`}
-                          style={
-                            isSelected && accentColor !== "#52b043"
-                              ? {
-                                boxShadow: `0 0 24px ${accentColor}90`,
-                                borderColor: accentColor,
-                              }
-                              : undefined
-                          }
-                        >
-                          {/* Game cover artwork */}
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={game.tileImg}
-                            alt={game.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                return (
+                  <div
+                    key={game.id}
+                    onClick={(e) => {
+                      if (justSwipedRef.current) {
+                        e.preventDefault();
+                        return;
+                      }
+                      setFocusZone("games");
+                      if (selectedIndex === i) {
+                        handleLaunchGame(game);
+                      } else {
+                        selectGameIndex(i);
+                      }
+                    }}
+                    onMouseEnter={() => {
+                      // Only trigger hover on actual mouse/pointer devices that support hover
+                      if (typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches) {
+                        if (selectedIndex !== i) {
+                          selectGameIndex(i);
+                        }
+                      }
+                    }}
+                    className={`group relative shrink-0 cursor-pointer transition-all duration-300 ease-out select-none touch-pan-y ${
+                      isSelected
+                        ? "scale-[1.04] sm:scale-[1.06] -translate-y-1 z-20 opacity-100"
+                        : "scale-100 sm:hover:scale-[1.02] opacity-75 sm:hover:opacity-100 z-10"
+                    }`}
+                    style={{
+                      width: isSelected ? "clamp(102px, 11vw, 128px)" : "clamp(82px, 8.8vw, 102px)",
+                    }}
+                  >
+                    {/* Tile Card Frame */}
+                    <div
+                      className={`relative aspect-square w-full overflow-hidden rounded-lg sm:rounded-xl bg-black/80 transition-all duration-300 ${
+                        isSelected
+                          ? "ring-[3px] ring-[#52b043] shadow-[0_0_24px_rgba(82,176,67,0.7)]"
+                          : "ring-1 ring-white/15 sm:hover:ring-white/40"
+                      }`}
+                      style={
+                        isSelected && accentColor !== "#52b043"
+                          ? {
+                              boxShadow: `0 0 24px ${accentColor}90`,
+                              borderColor: accentColor,
+                            }
+                          : undefined
+                      }
+                    >
+                      {/* Game cover artwork */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={game.tileImg}
+                        alt={game.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
 
-                          {/* Quick play overlay on hover if active */}
-                          {isSelected && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur text-white shadow-lg">
-                                <Play className="h-5 w-5 fill-current ml-0.5" />
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Game title: inside game box with low opacity and light color, shown only on hover */}
-                          <div className="pointer-events-none absolute inset-x-1.5 bottom-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <div className="rounded-md bg-black/45 backdrop-blur-md px-2 py-1 text-center border border-white/10 shadow-sm">
-                              <p className="truncate text-[10.5px] sm:text-[11.5px] font-medium text-white/85">
-                                {game.title}
-                              </p>
-                            </div>
+                      {/* Quick play overlay on hover if active on desktop */}
+                      {isSelected && (
+                        <div className="absolute inset-0 hidden sm:flex items-center justify-center bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur text-white shadow-lg">
+                            <Play className="h-5 w-5 fill-current ml-0.5" />
                           </div>
                         </div>
+                      )}
+
+                      {/* Game title: inside game box with low opacity and light color, shown on hover (desktop) or when active (mobile) */}
+                      <div
+                        className={`pointer-events-none absolute inset-x-1.5 bottom-1.5 transition-opacity duration-200 ${
+                          isSelected
+                            ? "opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                            : "opacity-0 sm:group-hover:opacity-100"
+                        }`}
+                      >
+                        <div className="rounded-md bg-black/45 backdrop-blur-md px-2 py-1 text-center border border-white/10 shadow-sm">
+                          <p className="truncate text-[10.5px] sm:text-[11.5px] font-medium text-white/85">
+                            {game.title}
+                          </p>
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile pagination indicators */}
+          <div className="flex sm:hidden items-center justify-center gap-2 mt-2.5 mb-1" aria-hidden="true">
+            {XBOX_GAMES.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => selectGameIndex(idx)}
+                aria-label={`Select game ${idx + 1}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  selectedIndex === idx
+                    ? "w-5 bg-[#52b043]"
+                    : "w-1.5 bg-white/30"
+                }`}
+              />
+            ))}
+          </div>
         </section>
 
         {/* BOTTOM SHELF: 4 Featured Cards (Small-Medium Proportions) */}
