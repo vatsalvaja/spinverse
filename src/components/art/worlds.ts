@@ -58,4 +58,15 @@ export const WORLD: Record<GameId, WorldTheme> = {
     mood: "Midnight navy, electric cyan and brushed gold",
     ctaText: "#031620",
   },
+  "tiger-clash": {
+    titleClass: "font-display font-extrabold tracking-[0.12em] text-white",
+    shapeClass: "rounded-[1.6rem]",
+    primary: "#f5a524",
+    secondary: "#22d3ee",
+    deep: "#0a0d18",
+    glow: "rgba(245,165,36,.4)",
+    kicker: "Tiger against Dragon",
+    mood: "Charcoal and navy, amber gold against electric blue",
+    ctaText: "#1d1203",
+  },
 };

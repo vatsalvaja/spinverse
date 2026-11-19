@@ -22,6 +22,7 @@ const LABEL: Record<GameId, string> = {
   "atlantis-cascade": "Illustration of a sunken city with glowing gems tumbling through the water",
   "neon-overdrive": "Illustration of a neon cyberpunk skyline above a glowing grid",
   skyfall: "Illustration of a futuristic aircraft climbing above a midnight city skyline",
+  "tiger-clash": "Illustration of a gold-rimmed card facing a blue-rimmed card in a dark arena",
 };
 
 function Pharaoh() {
@@ -257,9 +258,44 @@ function Skyfall() {
   );
 }
 
+function TigerClash() {
+  const card = (x: number, rot: number, edge: string, pip: string, glow: string) => (
+    <g transform={`translate(${x} 150) rotate(${rot})`}>
+      <rect x="-58" y="-82" width="116" height="164" rx="12" fill="#0d1224" stroke={edge} strokeWidth="3" />
+      <rect x="-50" y="-74" width="100" height="148" rx="8" fill="none" stroke={edge} strokeWidth="1" opacity=".55" />
+      <circle cx="0" cy="0" r="46" fill={glow} opacity=".35" />
+      <path d="M0 -26 C 22 -4, 24 10, 0 28 C -24 10, -22 -4, 0 -26 Z" fill={pip} />
+      <circle cx="-38" cy="-60" r="4" fill={pip} />
+      <circle cx="38" cy="60" r="4" fill={pip} />
+    </g>
+  );
+  return (
+    <g>
+      <defs>
+        <radialGradient id="tc-bg" cx=".5" cy=".55" r=".75">
+          <stop offset="0" stopColor="#1a2038" />
+          <stop offset="1" stopColor="#06080f" />
+        </radialGradient>
+        <radialGradient id="tc-spark" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset=".35" stopColor="#ffd37a" stopOpacity=".7" />
+          <stop offset="1" stopColor="#22d3ee" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="400" height="300" fill="url(#tc-bg)" />
+      <ellipse cx="90" cy="170" rx="120" ry="150" fill="#f5a524" opacity=".16" />
+      <ellipse cx="310" cy="170" rx="120" ry="150" fill="#22d3ee" opacity=".16" />
+      {card(142, -8, "#f5a524", "#f5a524", "#f5a524")}
+      {card(258, 8, "#22d3ee", "#22d3ee", "#22d3ee")}
+      <circle cx="200" cy="150" r="46" fill="url(#tc-spark)" />
+    </g>
+  );
+}
+
 const ART: Record<GameId, () => JSX.Element> = {
   "pharaohs-fortune": Pharaoh,
   "atlantis-cascade": Atlantis,
   "neon-overdrive": Neon,
   skyfall: Skyfall,
+  "tiger-clash": TigerClash,
 };

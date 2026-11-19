@@ -1,4 +1,4 @@
-import { Gauge, Layers, Orbit, Repeat, Sparkles, Sun, TrendingUp, Waves, Zap, type LucideIcon } from "lucide-react";
+import { Flame, Gauge, Layers, Orbit, Repeat, Sparkles, Sun, Swords, TrendingUp, Waves, Zap, type LucideIcon } from "lucide-react";
 import type { GameId } from "@/data/types";
 
 export interface Feature {
@@ -28,6 +28,11 @@ export const FEATURES: Record<GameId, Feature[]> = {
     { title: "Two independent bet panels", text: "Set up two bets with their own stakes. Cashing out one never touches the other.", icon: Layers },
     { title: "Auto cash-out", text: "Pick a multiplier and let the panel cash out for you before the sky falls.", icon: Zap },
     { title: "Rising multiplier", text: "The multiplier climbs as the aircraft flies. Cash out before it crashes.", icon: TrendingUp },
+  ],
+  "tiger-clash": [
+    { title: "Three selections", text: "Back the Tiger, back the Dragon, or call a Tie before the cards are drawn.", icon: Swords },
+    { title: "Cinematic card reveal", text: "Each card flips in turn, with a pause before the Dragon's card turns over.", icon: Sparkles },
+    { title: "Character victory animations", text: "The winner roars and breathes fire, the loser reels, and a tie clashes both together.", icon: Flame },
   ],
 };
 

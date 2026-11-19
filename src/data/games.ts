@@ -7,7 +7,7 @@ export interface Game {
   description: string;
   theme: string;
   concept: string;
-  category: "Classic Slots" | "Cascading Reels" | "Hold & Respin" | "Crash";
+  category: "Classic Slots" | "Cascading Reels" | "Hold & Respin" | "Crash" | "Card Duel";
   tags: string[];
   grid: string;
   volatility: "Low" | "Medium" | "High";
@@ -100,6 +100,26 @@ export const GAMES: Game[] = [
     isNew: true,
     accent: "#22d3ee",
     accentSoft: "rgba(34,211,238,.25)",
+  },
+  {
+    id: "tiger-clash",
+    name: "TIGER CLASH",
+    tagline: "The Ultimate Mythical Card Duel.",
+    description:
+      "A Tiger and a Dragon each draw a card. Back the Tiger, the Dragon or a Tie, then watch the cards flip and the winner roar. Free demo credits only.",
+    theme: "Mythical card duel",
+    concept: "Card duel",
+    category: "Card Duel",
+    tags: ["Tiger vs Dragon", "Card duel", "3 selections"],
+    grid: "Duel",
+    volatility: "Medium",
+    rating: 4.7,
+    playersNow: 716,
+    releasedAt: "2026-11-19",
+    featured: true,
+    isNew: true,
+    accent: "#f5a524",
+    accentSoft: "rgba(245,165,36,.25)",
   },
 ];
 
