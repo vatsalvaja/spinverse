@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Play } from "lucide-react";
-import { WorldArt } from "@/components/art/WorldArt";
 import { WORLD } from "@/components/art/worlds";
 import type { GameId } from "@/data/types";
 import { cn } from "@/lib/utils";
@@ -75,22 +74,15 @@ export function SectionHeader({ title, subtitle, action, className, kicker }: { 
   );
 }
 
-/** Cinematic page header with a dimmed world behind it. */
-export function PageBanner({ title, kicker, subtitle, world = "pharaohs-fortune", children, className }: { title: string; kicker?: string; subtitle?: string; world?: GameId; children?: ReactNode; className?: string }) {
+/** Page header inside the launcher: a compact title row, no hero artwork. (`world` and `kicker` are accepted for older callers.) */
+export function PageBanner({ title, subtitle, children, className }: { title: string; kicker?: string; subtitle?: string; world?: GameId; children?: ReactNode; className?: string }) {
   return (
-    <header className={cn("relative isolate overflow-hidden", className)}>
-      <div className="absolute inset-0 -z-10 opacity-60 [mask-image:linear-gradient(to_bottom,black_30%,transparent)]">
-        <WorldArt gameId={world} lite />
+    <header className={cn("lx-pagehead mx-auto flex w-full max-w-[1320px] flex-col gap-4 px-5 pb-7 pt-5 sm:px-8 sm:pt-7 lg:flex-row lg:items-end lg:justify-between", className)}>
+      <div className="min-w-0">
+        <h1 className="sv-display text-[clamp(1.4rem,2.6vw,1.9rem)] font-bold leading-tight text-white">{title}</h1>
+        {subtitle && <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-obsidian-200">{subtitle}</p>}
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#06060b] via-[#06060b]/80 to-[#06060b]/30" />
-      <div className="mx-auto flex max-w-[1320px] flex-col gap-6 px-5 pb-12 pt-28 sm:px-8 sm:pt-32 lg:flex-row lg:items-end lg:justify-between">
-        <div className="sv-rise-in">
-          {kicker && <p className="sv-serif mb-2 text-2xl text-gold-300">{kicker}</p>}
-          <h1 className="sv-display sv-silver-text text-balance text-[clamp(2.4rem,6.4vw,5.2rem)] font-bold leading-[0.98]">{title}</h1>
-          {subtitle && <p className="mt-5 max-w-xl text-base leading-relaxed text-obsidian-200">{subtitle}</p>}
-        </div>
-        {children}
-      </div>
+      {children}
     </header>
   );
 }

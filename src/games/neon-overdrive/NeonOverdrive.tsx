@@ -720,7 +720,7 @@ export function NeonOverdrive() {
       className={cn("no-root fixed inset-0 z-50 flex select-none flex-col overflow-hidden bg-[#04010e]", od && "no-od", calm && "no-calm")}
       style={{ ["--top" as string]: "clamp(46px,7.4dvh,64px)", ["--deck" as string]: "clamp(124px,23dvh,196px)", ["--sp" as string]: "clamp(72px,14.5dvh,120px)", ["--cs" as string]: `${cs}px` }}
     >
-      <style>{NEON_CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: NEON_CSS }} />
       <NeonDefs />
       <Ambient calm={calm} od={od} />
 

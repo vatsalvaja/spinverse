@@ -5,8 +5,7 @@ import { ArrowDownLeft, ArrowUpRight, Gamepad2, Gift, Info, RotateCw, ShieldChec
 import { Reveal } from "@/components/art/Reveal";
 import { WORLD } from "@/components/art/worlds";
 import { CountUp } from "@/components/site/CountUp";
-import { Btn, Chip, SectionHeader, Wrap } from "@/components/site/ui";
-import { VaultDoor } from "@/components/site/VaultDoor";
+import { Btn, Chip, PageBanner, SectionHeader, Wrap } from "@/components/site/ui";
 import { useToast } from "@/components/ui/toast";
 import { GAME_BY_ID } from "@/data/games";
 import { useDemoData } from "@/data/provider";
@@ -102,31 +101,31 @@ export default function WalletPage() {
 
   return (
     <div className="pb-10">
-      <section className="relative isolate overflow-hidden">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(900px_520px_at_72%_40%,rgba(240,200,100,.12),transparent_65%)]" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-[#06060b] to-transparent" />
-        <Wrap className="grid items-center gap-10 pb-14 pt-24 lg:grid-cols-[1fr_1.05fr] lg:pt-28">
-          <div className="sv-rise-in">
-            <p className="sv-serif text-2xl text-gold-300">Your virtual points</p>
-            <h1 className="sv-display sv-silver-text mt-2 text-[clamp(2.8rem,7vw,5.8rem)] font-bold leading-[0.95]">The Vault</h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-obsidian-100">Every point you earn is sealed here. Open the ledger to see where each one came from and where it went.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Btn size="lg" onClick={() => toast("Daily reward already claimed today. Come back tomorrow at 00:00 UTC.", "info")}>Claim daily reward</Btn>
-              <Btn size="lg" variant="outline" onClick={() => toast("Statement exports arrive in the next release.", "info")}>Download statement</Btn>
+      <PageBanner title="Points Vault" subtitle="Every demo point you earn is recorded here. Open the ledger to see where each one came from and where it went.">
+        <div className="flex flex-wrap gap-3">
+          <Btn onClick={() => toast("Daily reward already claimed today. Come back tomorrow at 00:00 UTC.", "info")}>Claim daily reward</Btn>
+          <Btn variant="outline" onClick={() => toast("Statement exports arrive in the next release.", "info")}>Download statement</Btn>
+        </div>
+      </PageBanner>
+
+      <Wrap className="mb-6">
+        <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 [background:linear-gradient(135deg,rgba(230,193,112,.14),rgba(122,92,255,.10)_60%,rgba(8,9,18,.6))] [box-shadow:inset_0_0_0_1px_rgba(230,193,112,.28),0_30px_70px_-40px_rgba(0,0,0,.9)]">
+          <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#e6c170]/15 blur-3xl" aria-hidden />
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-5">
+              <span className="lx-coin h-14 w-14 shrink-0 rounded-full sm:h-16 sm:w-16" aria-hidden />
+              <div>
+                <p className="text-sm text-obsidian-200">Balance</p>
+                <p className="sv-num sv-gold-text text-[clamp(2.4rem,7vw,4rem)] font-extrabold leading-none"><CountUp value={player.balance} /></p>
+                <p className="mt-1 text-xs text-obsidian-300">free demo points</p>
+              </div>
             </div>
-            <p className="mt-8 flex max-w-md items-start gap-2.5 text-sm leading-relaxed text-obsidian-300">
+            <p className="flex max-w-sm items-start gap-2.5 text-sm leading-relaxed text-obsidian-300">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" /> Points are for entertainment only. They can’t be bought, withdrawn or exchanged for money or prizes.
             </p>
           </div>
-          <div className="relative">
-            <VaultDoor>
-              <p className="text-[11px] font-semibold tracking-[0.22em] text-gold-300">BALANCE</p>
-              <p className="sv-num sv-gold-text my-1 text-[clamp(1.7rem,5.6vw,3.4rem)] font-extrabold leading-none"><CountUp value={player.balance} /></p>
-              <p className="text-xs text-obsidian-200">virtual points</p>
-            </VaultDoor>
-          </div>
-        </Wrap>
-      </section>
+        </div>
+      </Wrap>
 
       <Wrap>
         <Reveal>
@@ -152,7 +151,7 @@ export default function WalletPage() {
           </div>
         </Reveal>
 
-        <Reveal className="mt-24">
+        <Reveal className="mt-14">
           <SectionHeader kicker="Every point, accounted for" title="The ledger" subtitle={`${all.length} entries, newest first.`} />
           <div className="sv-scroll-x mb-8 flex gap-2 overflow-x-auto" role="tablist" aria-label="Filter transactions">
             {FILTERS.map((f) => (

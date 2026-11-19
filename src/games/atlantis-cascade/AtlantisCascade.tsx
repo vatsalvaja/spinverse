@@ -662,7 +662,7 @@ export function AtlantisCascade() {
 
   return (
     <div className={cn("ac-root fixed inset-0 z-50 flex select-none flex-col overflow-hidden bg-[#02121c]", calm && "ac-calm")}>
-      <style>{AC_CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: AC_CSS }} />
       <SymbolDefs />
       <Environment mode={free ? "bonus" : "normal"} calm={calm} />
 

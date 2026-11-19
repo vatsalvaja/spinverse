@@ -82,7 +82,7 @@ function pick<T>(rng: () => number, list: T[]): T {
   return list[Math.floor(rng() * list.length)];
 }
 
-interface RawTx extends Omit<Transaction, "id"> {}
+interface RawTx extends Omit<Transaction, "id"> { }
 
 function generateForUser(seed: Seed): { user: UserRecord; txs: RawTx[] } {
   const [num, name, username, email, accountType, reg, status, minsAgo, membership, country] = seed;

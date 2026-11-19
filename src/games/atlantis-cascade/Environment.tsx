@@ -213,7 +213,7 @@ export const Environment = memo(function Environment({ mode, calm }: { mode: "no
 
   return (
     <div className="ae" data-mode={mode} aria-hidden>
-      <style>{ENV_CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: ENV_CSS }} />
       <div className="ae-base" />
       <img className="ae-img ae-back" src="/art/atlantis/back.webp" alt="" draggable={false} />
       <div className="ae-tint" />

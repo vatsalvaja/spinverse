@@ -1,22 +1,9 @@
-"use client";
+import type { Metadata } from "next";
+import { GameLibrary } from "@/components/launcher/GameLibrary";
 
-import { XboxDashboard } from "@/components/console/XboxDashboard";
+export const metadata: Metadata = { title: "Games" };
 
-/**
- * Authentic Xbox Series X|S Console Dashboard
- * Matches the user reference layout with:
- * - Xbox Top bar: Gamerpic, Gamertag, ULTIMATE badge, Gamerscore, Utility icons, Clock
- * - Full-bleed dynamic cinematic game wallpaper
- * - Middle shelf: Game & App tiles with signature Xbox Green glowing focus box
- * - Bottom shelf: 4 Wide Featured Cards (Browse your games, Customize your Home, Forza Horizon 5, Play like a Pro)
- * - Gamepad & Keyboard navigation with authentic sound effects
- */
+/** The player's lobby: a game launcher. The games are the whole page. */
 export default function HomePage() {
-  const handleOpenUniverseMenu = () => {
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("sv-open-universe-menu"));
-    }
-  };
-
-  return <XboxDashboard onOpenUniverseMenu={handleOpenUniverseMenu} />;
+  return <GameLibrary view="all" />;
 }

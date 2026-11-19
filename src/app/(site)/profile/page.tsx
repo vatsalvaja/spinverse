@@ -6,7 +6,7 @@ import { Calendar, Coins, Crown, Gamepad2, Globe2, Mail, Pencil, ShieldCheck, Tr
 import { GameTitle } from "@/components/art/GameTitle";
 import { Reveal } from "@/components/art/Reveal";
 import { WORLD } from "@/components/art/worlds";
-import { LiveArt, WorldArt } from "@/components/art/WorldArt";
+import { LiveArt } from "@/components/art/WorldArt";
 import { Field } from "@/components/site/forms";
 import { HexAvatar } from "@/components/site/HexAvatar";
 import { MembershipBadge } from "@/components/site/MembershipBadge";
@@ -102,24 +102,20 @@ export default function ProfilePage() {
 
   return (
     <div className="pb-10">
-      <section className="relative isolate overflow-hidden" data-parallax-root>
-        <WorldArt gameId={player.favoriteGame} className="-z-20" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#05050a] via-[#05050a]/80 to-[#05050a]/30" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#06060b] via-transparent to-[#06060b]/60" />
-        <div className="absolute inset-0 -z-10" style={{ background: `radial-gradient(60% 60% at 10% 100%, ${fw.glow}, transparent 70%)` }} />
-        <Wrap className="grid items-center gap-12 pb-24 pt-24 sm:pt-28 lg:grid-cols-[1.4fr_1fr]">
+      <section className="mb-8 pt-3 sm:pt-5">
+        <Wrap>
+        <div className="relative isolate grid items-center gap-8 overflow-hidden rounded-3xl p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] [box-shadow:inset_0_0_0_1px_rgba(255,255,255,.08),0_30px_70px_-40px_rgba(0,0,0,.9)]" style={{ background: `radial-gradient(60% 80% at 8% 100%, ${fw.glow}, transparent 70%), linear-gradient(180deg, rgba(20,22,38,.9), rgba(8,9,18,.92))` }}>
           <div className="sv-rise-in">
-            <p className="sv-serif text-2xl sm:text-3xl" style={{ color: fw.primary }}>Player identity</p>
-            <div className="mt-6 flex flex-col gap-7 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-7 sm:flex-row sm:items-center">
               <div className="relative shrink-0">
-                <Ring value={player.totalEarned % 5000} max={5000} size={196} stroke={5} color={fw.primary}>
-                  <HexAvatar name={player.name} size={136} />
+                <Ring value={player.totalEarned % 5000} max={5000} size={150} stroke={5} color={fw.primary}>
+                  <HexAvatar name={player.name} size={104} />
                 </Ring>
                 <span className="sv-num absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-gold-200/60 bg-obsidian-900 px-3.5 py-1 text-sm font-bold text-gold-100 shadow-lg">LEVEL {level}</span>
               </div>
               <div className="min-w-0">
-                <h1 className="sv-display text-balance text-[clamp(2.2rem,5.4vw,4.4rem)] font-bold leading-[1] text-white">{player.name}</h1>
-                <p className="mt-2 text-xl text-obsidian-100">@{player.username}</p>
+                <h1 className="sv-display text-balance text-[clamp(1.6rem,3.6vw,2.6rem)] font-bold leading-[1.05] text-white">{player.name}</h1>
+                <p className="mt-1.5 text-base text-obsidian-100">@{player.username}</p>
                 <div className="mt-4 flex flex-wrap items-center gap-2.5">
                   <MembershipBadge tier={player.membership} />
                   <Chip tone="neutral" className="!text-sm"><Globe2 className="h-3.5 w-3.5" /> {player.country}</Chip>
@@ -127,9 +123,9 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            <div className="mt-9 flex flex-wrap gap-3">
-              {isGuest ? <BtnLink href="/register" size="lg">Create account</BtnLink> : <Btn size="lg" onClick={openEdit}><Pencil className="h-4 w-4" /> Edit profile</Btn>}
-              <BtnLink href="/achievements" variant="outline" size="lg">View all medals</BtnLink>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {isGuest ? <BtnLink href="/register" size="md">Create account</BtnLink> : <Btn size="md" onClick={openEdit}><Pencil className="h-4 w-4" /> Edit profile</Btn>}
+              <BtnLink href="/achievements" variant="outline" size="md">View all medals</BtnLink>
             </div>
           </div>
 
@@ -150,10 +146,11 @@ export default function ProfilePage() {
               <p className="sv-num mt-4 text-center text-xs tracking-[0.3em] text-obsidian-300">{player.id}</p>
             </PlayerCard>
           </div>
+        </div>
         </Wrap>
       </section>
 
-      <Wrap className="relative z-10 -mt-12">
+      <Wrap className="relative z-10">
         <Reveal>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {stats.map(({ icon: Icon, label, value }) => (
@@ -167,9 +164,9 @@ export default function ProfilePage() {
         </Reveal>
 
         {/* favorite world + mastery */}
-        <div className="mt-24 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
           <Reveal>
-            <article data-parallax-root className={cn("group relative isolate flex min-h-[460px] items-end overflow-hidden bg-black", fw.shapeClass)}>
+            <article data-parallax-root className={cn("group relative isolate flex min-h-[340px] items-end overflow-hidden bg-black", fw.shapeClass)}>
               <div className="absolute inset-0 -z-10 transition-transform duration-[1400ms] group-hover:scale-[1.05]"><LiveArt gameId={player.favoriteGame} /></div>
               <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/35 to-transparent" />
               <div className="absolute inset-0 -z-10" style={{ background: `radial-gradient(80% 60% at 20% 100%, ${fw.glow}, transparent 70%)` }} />
@@ -208,7 +205,7 @@ export default function ProfilePage() {
         </div>
 
         {/* medal showcase */}
-        <Reveal className="mt-24">
+        <Reveal className="mt-14">
           <SectionHeader kicker="Your finest" title="Medal showcase" action={<Link href="/achievements" className="text-sm font-semibold text-gold-300 hover:text-gold-100">All medals</Link>} />
           <div className="sv-panel p-6 sm:p-10">
             <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
@@ -240,7 +237,7 @@ export default function ProfilePage() {
         </Reveal>
 
         {/* account details */}
-        <Reveal className="mt-24">
+        <Reveal className="mt-14">
           <SectionHeader kicker="Account" title="Details" />
           <dl className="grid gap-4 md:grid-cols-3">
             {[
