@@ -26,8 +26,8 @@ export function PlayProvider({ children }: { children: ReactNode }) {
     (id: GameId) => {
       markPlayed(id);
       // Pharaoh’s Fortune has its own playable screen; the other worlds keep the launch preview for now.
-      if (id === "pharaohs-fortune") {
-        router.push("/play/pharaohs-fortune");
+      if (id === "pharaohs-fortune" || id === "atlantis-cascade" || id === "neon-overdrive") {
+        router.push(`/play/${id}`);
         return;
       }
       setProgress(0);
