@@ -23,6 +23,7 @@ export const ART: Record<GameId, WorldAssets> = {
   "neon-overdrive": make("neon"),
   skyfall: make("skyfall"),
   "tiger-clash": make("tiger-clash"),
+  roulette: make("roulette"),
 };
 
 export const VAULT_ART = { door: "/art/vault/door.webp", wheel: "/art/vault/wheel.webp" };

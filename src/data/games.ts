@@ -7,7 +7,7 @@ export interface Game {
   description: string;
   theme: string;
   concept: string;
-  category: "Classic Slots" | "Cascading Reels" | "Hold & Respin" | "Crash" | "Card Duel";
+  category: "Classic Slots" | "Cascading Reels" | "Hold & Respin" | "Crash" | "Card Duel" | "Table Games";
   tags: string[];
   grid: string;
   volatility: "Low" | "Medium" | "High";
@@ -120,6 +120,26 @@ export const GAMES: Game[] = [
     isNew: true,
     accent: "#f5a524",
     accentSoft: "rgba(245,165,36,.25)",
+  },
+  {
+    id: "roulette",
+    name: "Roulette",
+    tagline: "Place your bets. Watch the wheel.",
+    description:
+      "European single-zero roulette with a full betting table: straight, split, street, corner and six line, plus every outside bet. Stack chips, undo, repeat the last round and watch the ball settle. Free demo credits only.",
+    theme: "Luxury casino",
+    concept: "European roulette",
+    category: "Table Games",
+    tags: ["European wheel", "37 pockets", "All inside and outside bets"],
+    grid: "37 pockets",
+    volatility: "Medium",
+    rating: 4.8,
+    playersNow: 934,
+    releasedAt: "2026-11-20",
+    featured: true,
+    isNew: true,
+    accent: "#c9a24b",
+    accentSoft: "rgba(201,162,75,.25)",
   },
 ];
 

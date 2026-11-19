@@ -69,4 +69,15 @@ export const WORLD: Record<GameId, WorldTheme> = {
     mood: "Charcoal and navy, amber gold against electric blue",
     ctaText: "#1d1203",
   },
+  roulette: {
+    titleClass: "font-display font-extrabold tracking-[0.12em] text-white",
+    shapeClass: "rounded-[1.6rem]",
+    primary: "#c9a24b",
+    secondary: "#1f6b43",
+    deep: "#07120d",
+    glow: "rgba(201,162,75,.4)",
+    kicker: "The private salon",
+    mood: "Black and charcoal, green felt, champagne gold",
+    ctaText: "#1c1405",
+  },
 };

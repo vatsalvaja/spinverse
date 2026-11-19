@@ -98,6 +98,7 @@ export function gameStats(txs: Transaction[]) {
     "neon-overdrive": { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
     skyfall: { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
     "tiger-clash": { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
+    roulette: { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
   };
   for (const t of txs) {
     if (t.status !== "completed" || !t.game) continue;

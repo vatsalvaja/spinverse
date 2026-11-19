@@ -1,4 +1,4 @@
-import { Flame, Gauge, Layers, Orbit, Repeat, Sparkles, Sun, Swords, TrendingUp, Waves, Zap, type LucideIcon } from "lucide-react";
+import { CircleDot, Coins, Flame, Gauge, Layers, Orbit, Repeat, Sparkles, Sun, Swords, TrendingUp, Waves, Zap, type LucideIcon } from "lucide-react";
 import type { GameId } from "@/data/types";
 
 export interface Feature {
@@ -33,6 +33,11 @@ export const FEATURES: Record<GameId, Feature[]> = {
     { title: "Three selections", text: "Back the Tiger, back the Dragon, or call a Tie before the cards are drawn.", icon: Swords },
     { title: "Cinematic card reveal", text: "Each card flips in turn, with a pause before the Dragon's card turns over.", icon: Sparkles },
     { title: "Character victory animations", text: "The winner roars and breathes fire, the loser reels, and a tie clashes both together.", icon: Flame },
+  ],
+  roulette: [
+    { title: "Full European table", text: "A single zero, 37 pockets and every inside and outside bet: straight, split, street, corner, six line, dozens, columns and the even-money bets.", icon: Layers },
+    { title: "Chips with undo, clear and repeat", text: "Stack chips on as many positions as you like, take the last one back, clear the table or repeat the previous round.", icon: Coins },
+    { title: "A wheel that plays out", text: "The wheel and ball turn in opposite directions, slow down and settle into the exact pocket the game drew.", icon: CircleDot },
   ],
 };
 

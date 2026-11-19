@@ -23,6 +23,7 @@ const LABEL: Record<GameId, string> = {
   "neon-overdrive": "Illustration of a neon cyberpunk skyline above a glowing grid",
   skyfall: "Illustration of a futuristic aircraft climbing above a midnight city skyline",
   "tiger-clash": "Illustration of a gold-rimmed card facing a blue-rimmed card in a dark arena",
+  roulette: "Illustration of a mahogany roulette wheel with a brass rim and an ivory ball",
 };
 
 function Pharaoh() {
@@ -292,10 +293,47 @@ function TigerClash() {
   );
 }
 
+function Roulette() {
+  const POCKETS = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+  const RED = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+  const cx = 200;
+  const cy = 150;
+  const pt = (a: number, r: number) => `${(cx + Math.sin(a) * r).toFixed(1)},${(cy - Math.cos(a) * r * 0.5).toFixed(1)}`;
+  return (
+    <g>
+      <defs>
+        <radialGradient id="rl-bg" cx=".5" cy=".45" r=".8">
+          <stop offset="0" stopColor="#1d1a14" />
+          <stop offset="1" stopColor="#050505" />
+        </radialGradient>
+        <linearGradient id="rl-wood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#8a4a22" />
+          <stop offset="1" stopColor="#2b1208" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="300" fill="url(#rl-bg)" />
+      <path d="M0 250 L400 250 L400 300 L0 300 Z" fill="#0f4a2e" />
+      <path d="M0 252 L400 252" stroke="#c9a24b" strokeWidth="2" />
+      <ellipse cx={cx} cy={cy} rx="150" ry="78" fill="url(#rl-wood)" />
+      <ellipse cx={cx} cy={cy} rx="150" ry="78" fill="none" stroke="#d6b25a" strokeWidth="3" />
+      {POCKETS.map((n, i) => {
+        const a0 = ((i - 0.5) / 37) * Math.PI * 2;
+        const a1 = ((i + 0.5) / 37) * Math.PI * 2;
+        return <polygon key={i} points={`${pt(a0, 118)} ${pt(a1, 118)} ${pt(a1, 86)} ${pt(a0, 86)}`} fill={n === 0 ? "#1a8a4a" : RED.has(n) ? "#b3202a" : "#0c0c0f"} stroke="#d6b25a" strokeWidth=".5" />;
+      })}
+      <ellipse cx={cx} cy={cy} rx="62" ry="31" fill="#6b3a1a" stroke="#d6b25a" strokeWidth="1.5" />
+      <rect x="196" y="100" width="8" height="52" rx="3" fill="#d6b25a" />
+      <circle cx="200" cy="98" r="7" fill="#f0d68a" />
+      <circle cx="262" cy="120" r="4" fill="#f6f1e4" />
+    </g>
+  );
+}
+
 const ART: Record<GameId, () => JSX.Element> = {
   "pharaohs-fortune": Pharaoh,
   "atlantis-cascade": Atlantis,
   "neon-overdrive": Neon,
   skyfall: Skyfall,
   "tiger-clash": TigerClash,
+  roulette: Roulette,
 };
