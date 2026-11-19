@@ -8,14 +8,14 @@ import { cn } from "@/lib/utils";
 type Variant = "gold" | "ghost" | "outline" | "dark";
 
 const base =
-  "sv-shine relative inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[0.01em] transition duration-300 disabled:pointer-events-none disabled:opacity-50 active:scale-[.97]";
+  "sv-shine relative inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold tracking-[0.01em] transition duration-300 disabled:pointer-events-none disabled:opacity-50 active:scale-[.97]";
 const variants: Record<Variant, string> = {
   gold: "bg-gradient-to-b from-[#f9e6a8] via-[#e3b951] to-[#b98524] text-[#2a1805] shadow-[0_0_0_1px_rgba(255,236,170,.5)_inset,0_10px_30px_-8px_rgba(226,185,80,.55)] hover:shadow-[0_0_0_1px_rgba(255,236,170,.7)_inset,0_14px_44px_-6px_rgba(226,185,80,.75)]",
   ghost: "text-obsidian-200 hover:bg-white/[0.07] hover:text-white",
   outline: "border border-gold-300/40 bg-white/[0.02] text-gold-100 backdrop-blur hover:border-gold-200/80 hover:bg-gold-300/10",
   dark: "border border-white/10 bg-white/[0.06] text-white backdrop-blur hover:bg-white/[0.12]",
 };
-const sizes = { sm: "h-9 px-4 text-[13px]", md: "h-11 px-6 text-sm", lg: "h-[52px] px-8 text-[15px]" };
+const sizes = { sm: "h-8 px-3.5 text-[13px]", md: "h-10 px-5 text-[13.5px]", lg: "h-11 px-6 text-sm" };
 
 interface Common {
   variant?: Variant;
@@ -61,26 +61,25 @@ export function PlayButton({ gameId, children = "Play now", className, size = "l
   );
 }
 
-export function SectionHeader({ title, subtitle, action, className, kicker }: { title: string; subtitle?: string; action?: ReactNode; className?: string; kicker?: string }) {
+export function SectionHeader({ title, subtitle, action, className }: { title: string; subtitle?: string; action?: ReactNode; className?: string; kicker?: string }) {
   return (
-    <div className={cn("mb-7 flex items-end justify-between gap-6", className)}>
+    <div className={cn("mb-4 flex items-end justify-between gap-4", className)}>
       <div className="min-w-0">
-        {kicker && <p className="sv-serif mb-1 text-xl text-gold-300">{kicker}</p>}
-        <h2 className="sv-display text-balance text-[1.6rem] font-semibold leading-[1.05] text-white sm:text-[2.2rem]">{title}</h2>
-        {subtitle && <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-obsidian-200">{subtitle}</p>}
+        <h2 className="sv-display text-balance text-[1rem] font-semibold leading-tight text-white sm:text-[1.1rem]">{title}</h2>
+        {subtitle && <p className="mt-1 max-w-xl text-[13px] leading-relaxed text-obsidian-300">{subtitle}</p>}
       </div>
       {action}
     </div>
   );
 }
 
-/** Page header inside the launcher: a compact title row, no hero artwork. (`world` and `kicker` are accepted for older callers.) */
+/** Page header inside the launcher: one compact title bar. (`world` and `kicker` are accepted for older callers.) */
 export function PageBanner({ title, subtitle, children, className }: { title: string; kicker?: string; subtitle?: string; world?: GameId; children?: ReactNode; className?: string }) {
   return (
-    <header className={cn("lx-pagehead mx-auto flex w-full max-w-[1320px] flex-col gap-4 px-5 pb-7 pt-5 sm:px-8 sm:pt-7 lg:flex-row lg:items-end lg:justify-between", className)}>
+    <header className={cn("lx-pagehead mb-5 flex w-full flex-col gap-3 border-b border-white/[0.06] px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between", className)}>
       <div className="min-w-0">
-        <h1 className="sv-display text-[clamp(1.4rem,2.6vw,1.9rem)] font-bold leading-tight text-white">{title}</h1>
-        {subtitle && <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-obsidian-200">{subtitle}</p>}
+        <h1 className="sv-display text-[1.1rem] font-semibold leading-tight text-white">{title}</h1>
+        {subtitle && <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-obsidian-300">{subtitle}</p>}
       </div>
       {children}
     </header>
@@ -88,7 +87,7 @@ export function PageBanner({ title, subtitle, children, className }: { title: st
 }
 
 export function Wrap({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("mx-auto w-full max-w-[1320px] px-5 sm:px-8", className)}>{children}</div>;
+  return <div className={cn("mx-auto w-full max-w-[1400px] px-4 sm:px-6", className)}>{children}</div>;
 }
 
 export function PageTitle({ title, subtitle, children }: { title: string; subtitle?: string; children?: ReactNode }) {

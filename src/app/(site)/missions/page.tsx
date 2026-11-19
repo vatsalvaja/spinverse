@@ -34,7 +34,7 @@ function Ticket({ m, claimed, onClaim }: { m: Mission; claimed: boolean; onClaim
   return (
     <article className={cn("sv-ticket relative grid grid-cols-[104px_1fr] border bg-gradient-to-br from-white/[0.07] to-white/[0.015] sm:grid-cols-[132px_1fr]", done && !claimed ? "border-gold-200/50" : "border-white/10")} style={{ borderRadius: 18 }}>
       <div className="relative flex flex-col items-center justify-center border-r-2 border-dashed border-white/15 px-3 py-6 text-center" style={{ background: `linear-gradient(160deg, ${c}33, transparent 70%)` }}>
-        <p className="sv-num text-4xl font-extrabold leading-none text-white sm:text-5xl">{m.reward}</p>
+        <p className="sv-num text-2xl font-extrabold leading-none text-white sm:text-3xl">{m.reward}</p>
         <p className="mt-1 text-xs font-semibold tracking-wider" style={{ color: c }}>POINTS</p>
       </div>
       <div className="flex flex-col p-5 sm:p-6">

@@ -31,7 +31,7 @@ type Seed = [
 ];
 
 const SEEDS: Seed[] = [
-  [1001, "Aurelia Voss", "aurelia_v", "aurelia.voss@mailbox.test", "Registered", "2026-01-14", "active", 12, "Platinum", "United Kingdom"],
+  [1001, "Vatsal Vaja", "aurelia_v", "vajavatsal@gmail.com", "Registered", "2026-01-14", "active", 12, "Platinum", "United Kingdom"],
   [1002, "Marcus Okafor", "marcus_ok", "marcus.okafor@mailbox.test", "Registered", "2026-02-03", "active", 95, "Gold", "Nigeria"],
   [1003, "Priya Raman", "priyaspins", "priya.raman@mailbox.test", "Registered", "2026-02-19", "active", 340, "Gold", "India"],
   [1004, "Lucas Moreau", "lucasm", "lucas.moreau@mailbox.test", "Registered", "2026-03-02", "active", 1500, "Silver", "France"],

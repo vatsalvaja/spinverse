@@ -95,7 +95,7 @@ export default function RewardsPage() {
           })}
         </div>
 
-        <Reveal className="mt-14">
+        <Reveal className="mt-8">
           <SectionHeader kicker="Your history" title="Recently claimed" />
           <ol className="relative space-y-4 before:absolute before:bottom-3 before:left-[23px] before:top-3 before:w-px before:bg-gradient-to-b before:from-gold-300/60 before:to-transparent">
             {RECENT_REWARDS.map((r) => (

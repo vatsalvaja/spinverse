@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { Award, Compass, Gift, Home, Settings, Target, Trophy, User, Wallet } from "lucide-react";
+import { Award, Clock3, Compass, Gift, Heart, Home, Settings, Target, Trophy, User, Wallet } from "lucide-react";
 import { LauncherShell } from "@/components/launcher/LauncherShell";
 import { PlayProvider } from "@/components/site/PlayModal";
 import { UniverseMenu } from "@/components/site/UniverseMenu";
@@ -10,9 +10,11 @@ import type { GameId } from "@/data/types";
 import { useSession } from "@/lib/session";
 
 const UNIVERSE: { href: string; label: string; note: string; world: GameId; icon: typeof Home }[] = [
-  { href: "/dashboard", label: "Home", note: "Your games", world: "pharaohs-fortune", icon: Home },
+  { href: "/dashboard", label: "Home", note: "Your library", world: "pharaohs-fortune", icon: Home },
   { href: "/games", label: "Explore Games", note: "Browse and filter", world: "neon-overdrive", icon: Compass },
-  { href: "/wallet", label: "Points Vault", note: "Balance and ledger", world: "pharaohs-fortune", icon: Wallet },
+  { href: "/favorites", label: "Favorites", note: "Games you pinned", world: "neon-overdrive", icon: Heart },
+  { href: "/recent", label: "Recently Played", note: "Pick up where you left off", world: "atlantis-cascade", icon: Clock3 },
+  { href: "/wallet", label: "Vault", note: "Balance and ledger", world: "pharaohs-fortune", icon: Wallet },
   { href: "/leaderboard", label: "Leaderboard", note: "Season rankings", world: "neon-overdrive", icon: Trophy },
   { href: "/missions", label: "Missions", note: "Daily and weekly quests", world: "atlantis-cascade", icon: Target },
   { href: "/rewards", label: "Rewards", note: "Claim and unlock", world: "pharaohs-fortune", icon: Gift },
@@ -58,7 +60,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           {inGame ? (
             <main className="relative z-10">{children}</main>
           ) : (
-            <LauncherShell onLogout={logout} onOpenMenu={() => setOpen(true)} menuOpen={open}>
+            <LauncherShell onLogout={logout} onOpenMenu={() => setOpen(true)}>
               {children}
             </LauncherShell>
           )}

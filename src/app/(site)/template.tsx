@@ -7,7 +7,7 @@ import { useReduceMotion } from "@/lib/useReduceMotion";
 export default function Template({ children }: { children: React.ReactNode }) {
   const reduce = useReduceMotion();
   return (
-    <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, ease: "easeOut" }}>
+    <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.16, ease: "easeOut" }}>
       {children}
     </motion.div>
   );

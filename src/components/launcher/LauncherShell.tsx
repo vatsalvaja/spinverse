@@ -2,25 +2,52 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { motion } from "framer-motion";
-import { Clock3, Gamepad2, Gift, Heart, LayoutGrid, LogOut, Search, Settings, Trophy, User, X } from "lucide-react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from "react";
+import { Award, Clock3, Compass, Gift, Heart, Home, LogOut, Menu, Search, Settings, Target, Trophy, User, Wallet, X } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
-import { Avatar } from "@/components/ui/avatar";
 import { useSession } from "@/lib/session";
 import { formatPoints } from "@/lib/utils";
+import { AccountMenu } from "./AccountMenu";
+import { APP_CSS } from "./appStyles";
 import { LAUNCHER_CSS } from "./launcherStyles";
 
-/** Search lives in the top bar but filters the game library, so the two share it here. */
+/** Search lives in the toolbar but filters the game library, so the two share it here. */
 const SearchContext = createContext<{ query: string; setQuery: (q: string) => void }>({ query: "", setQuery: () => {} });
 export const useLauncherSearch = () => useContext(SearchContext);
 
 const LIBRARY_ROUTES = ["/dashboard", "/favorites", "/recent"];
-
 const starts = (path: string, base: string) => path === base || path.startsWith(base + "/");
 
-/** The one frame every player-facing page lives in: ambient backdrop, sidebar, top bar, and a scrolling content area. */
-export function LauncherShell({ children, onLogout, onOpenMenu, menuOpen }: { children: ReactNode; onLogout: () => void; onOpenMenu: () => void; menuOpen: boolean }) {
+type Icon = ComponentType<{ className?: string }>;
+interface NavItem {
+  href: string;
+  label: string;
+  icon: Icon;
+}
+
+const MAIN: NavItem[] = [
+  { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/games", label: "Explore Games", icon: Compass },
+  { href: "/favorites", label: "Favorites", icon: Heart },
+  { href: "/recent", label: "Recently Played", icon: Clock3 },
+  { href: "/wallet", label: "Vault", icon: Wallet },
+  { href: "/profile", label: "Profile", icon: User },
+  { href: "/settings", label: "Settings", icon: Settings },
+];
+const COMMUNITY: NavItem[] = [
+  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/missions", label: "Missions", icon: Target },
+  { href: "/rewards", label: "Rewards", icon: Gift },
+  { href: "/achievements", label: "Achievements", icon: Award },
+];
+/** The phone dock holds the essentials; "More" opens the full list. */
+const DOCK: NavItem[] = [MAIN[0], MAIN[1], MAIN[2], MAIN[4], MAIN[5]];
+
+/**
+ * The one frame every player-facing page lives in, like an installed launcher: sidebar, toolbar, workspace and
+ * status bar. Navigation swaps only the workspace; the frame stays put.
+ */
+export function LauncherShell({ children, onLogout, onOpenMenu }: { children: ReactNode; onLogout: () => void; onOpenMenu: () => void; menuOpen?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const { player, mode } = useSession();
@@ -28,8 +55,9 @@ export function LauncherShell({ children, onLogout, onOpenMenu, menuOpen }: { ch
   const searchRef = useRef<HTMLInputElement>(null);
   const scroller = useRef<HTMLElement>(null);
   const search = useMemo(() => ({ query, setQuery }), [query]);
+  const css = useMemo(() => LAUNCHER_CSS + APP_CSS, []);
 
-  // each page starts at the top: the content area scrolls, not the window
+  // each page starts at the top: the workspace scrolls, not the window
   useEffect(() => {
     scroller.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pathname]);
@@ -47,61 +75,59 @@ export function LauncherShell({ children, onLogout, onOpenMenu, menuOpen }: { ch
     return () => window.removeEventListener("keydown", on);
   }, []);
 
-  // searching from any other page takes you to the games
+  // searching from a page that has no games on it takes you to Explore
   const onSearch = (v: string) => {
     setQuery(v);
-    if (v && !LIBRARY_ROUTES.includes(pathname) && !starts(pathname, "/games")) router.push("/dashboard");
+    if (v && !LIBRARY_ROUTES.includes(pathname) && !starts(pathname, "/games")) router.push("/games");
   };
 
-  const nav = {
-    games: pathname === "/dashboard" || starts(pathname, "/games"),
-    favorites: pathname === "/favorites",
-    recent: pathname === "/recent",
-    profile: starts(pathname, "/profile"),
-    settings: starts(pathname, "/settings"),
-    wallet: starts(pathname, "/wallet"),
-    leaderboard: starts(pathname, "/leaderboard"),
-    rewards: starts(pathname, "/rewards"),
-    other: starts(pathname, "/missions") || starts(pathname, "/achievements"),
-  };
-  const name = player?.name ?? "Player";
+  const isActive = (item: NavItem) => (item.href === "/dashboard" ? pathname === "/dashboard" : starts(pathname, item.href));
 
   return (
     <div className="lx-root fixed inset-0 z-30 flex overflow-hidden text-white">
-      <style dangerouslySetInnerHTML={{ __html: LAUNCHER_CSS }} />
-      <div className="lx-orb lx-orb-a" aria-hidden />
-      <div className="lx-orb lx-orb-b" aria-hidden />
-      <div className="lx-grid-bg" aria-hidden />
+      <style dangerouslySetInnerHTML={{ __html: css }} />
 
-      {/* ---------------- left rail (desktop and tablet) ---------------- */}
-      <nav aria-label="Launcher" className="lx-rail relative z-10 hidden w-[88px] shrink-0 flex-col items-center px-2.5 py-5 md:flex">
-        <Link href="/dashboard" aria-label="SPINVERSE home" className="mb-6 block transition-transform duration-700 hover:rotate-[24deg]">
-          <LogoMark className="h-11 w-11" />
+      {/* ---------------- sidebar ---------------- */}
+      <aside className="lx-side relative z-10 hidden w-[72px] shrink-0 flex-col md:flex lg:w-[220px]">
+        <Link href="/dashboard" aria-label="SPINVERSE home" className="lx-brand justify-center lg:justify-start">
+          <LogoMark className="h-8 w-8 shrink-0" />
+          <span className="sv-display hidden text-[13px] font-semibold tracking-[0.3em] text-white lg:inline">SPINVERSE</span>
         </Link>
-        <div className="flex w-full flex-col gap-1.5">
-          <RailLink href="/dashboard" active={nav.games} icon={<Gamepad2 className="h-[22px] w-[22px]" />} label="Games" />
-          <RailLink href="/favorites" active={nav.favorites} icon={<Heart className="h-[22px] w-[22px]" />} label="Favorites" />
-          <RailLink href="/recent" active={nav.recent} icon={<Clock3 className="h-[22px] w-[22px]" />} label="Recent" />
-        </div>
-        <div className="mx-auto my-4 h-px w-8 bg-white/10" />
-        <div className="flex w-full flex-col gap-1.5">
-          <RailLink href="/profile" active={nav.profile} icon={<User className="h-[22px] w-[22px]" />} label="Profile" />
-        </div>
-        <div className="mt-auto flex w-full flex-col gap-1.5">
-          <RailLink href="/settings" active={nav.settings} icon={<Settings className="h-[22px] w-[22px]" />} label="Settings" />
-          <RailButton onClick={onLogout} icon={<LogOut className="h-[22px] w-[22px]" />} label="Log out" />
-        </div>
-      </nav>
+        <nav aria-label="Main" className="lx-scroll flex min-h-0 flex-1 flex-col overflow-y-auto px-2.5 py-3">
+          <ul className="space-y-0.5">
+            {MAIN.map((item) => (
+              <li key={item.href}>
+                <NavLink item={item} active={isActive(item)} />
+              </li>
+            ))}
+          </ul>
+          <p className="lx-gl hidden lg:block">Community</p>
+          <div className="mx-auto my-3 h-px w-7 bg-white/10 lg:hidden" />
+          <ul className="space-y-0.5">
+            {COMMUNITY.map((item) => (
+              <li key={item.href}>
+                <NavLink item={item} active={isActive(item)} />
+              </li>
+            ))}
+          </ul>
+          <div className="mt-auto pt-3">
+            <button type="button" onClick={onLogout} aria-label="Log out" title="Log out" className="lx-nav">
+              <LogOut className="h-[18px] w-[18px]" />
+              <span className="hidden lg:inline">Log out</span>
+            </button>
+          </div>
+        </nav>
+      </aside>
 
       <div className="relative z-10 flex min-w-0 flex-1 flex-col">
-        {/* ------------------------------ top bar ------------------------------ */}
-        <header className="flex items-center gap-2.5 px-3 pb-2 pt-3 sm:gap-3 sm:px-6 sm:pt-5">
+        {/* ---------------- toolbar ---------------- */}
+        <header className="lx-toolbar">
           <Link href="/dashboard" aria-label="SPINVERSE home" className="shrink-0 md:hidden">
-            <LogoMark className="h-9 w-9" />
+            <LogoMark className="h-8 w-8" />
           </Link>
 
-          <label className="lx-search group flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-2xl px-3.5 md:max-w-[460px]">
-            <Search className="h-[18px] w-[18px] shrink-0 text-white/45 transition-colors group-focus-within:text-[var(--lx-gold)]" />
+          <label className="lx-search group flex h-9 min-w-0 flex-1 items-center gap-2.5 px-3 md:max-w-[420px]">
+            <Search className="h-4 w-4 shrink-0 text-white/40 transition-colors group-focus-within:text-[var(--lx-gold)]" />
             <input
               ref={searchRef}
               value={query}
@@ -113,38 +139,37 @@ export function LauncherShell({ children, onLogout, onOpenMenu, menuOpen }: { ch
               autoComplete="off"
               aria-label="Search games"
               placeholder="Search games"
-              className="min-w-0 flex-1 bg-transparent text-[15px] text-white placeholder:text-white/35 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+              className="min-w-0 flex-1 bg-transparent text-[14px] text-white placeholder:text-white/35 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
             />
             {query ? (
-              <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="rounded-full p-1 text-white/50 hover:text-white">
+              <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="rounded-full p-0.5 text-white/50 hover:text-white">
                 <X className="h-4 w-4" />
               </button>
             ) : (
-              <kbd className="hidden rounded-md border border-white/12 px-1.5 py-0.5 font-num text-[11px] text-white/40 md:block">/</kbd>
+              <kbd className="hidden rounded border border-white/12 px-1.5 font-num text-[11px] leading-[18px] text-white/40 md:block">/</kbd>
             )}
           </label>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-2.5">
-            <Link href="/wallet" data-active={nav.wallet} aria-label={`${formatPoints(player?.balance ?? 0)} demo points. Open your points vault`} className="lx-points flex h-11 items-center gap-2 rounded-2xl pl-2.5 pr-3.5 transition-transform hover:-translate-y-px">
-              <span className="lx-coin h-5 w-5 rounded-full" aria-hidden />
-              <span className="font-num text-[15px] font-bold tabular-nums text-[#f6e3ae]">{formatPoints(player?.balance ?? 0)}</span>
+          <div className="ml-auto flex items-center gap-2">
+            <Link
+              href="/wallet"
+              aria-label={`${formatPoints(player?.balance ?? 0)} demo points. Open the vault`}
+              data-active={starts(pathname, "/wallet")}
+              className="lx-points flex h-9 items-center gap-2 pl-2 pr-3 transition-colors hover:bg-[rgba(230,193,112,.2)] data-[active=true]:bg-[rgba(230,193,112,.2)]"
+            >
+              <span className="lx-coin h-[18px] w-[18px] rounded-full" aria-hidden />
+              <span className="font-num text-[14px] font-bold tabular-nums text-[#f6e3ae]">{formatPoints(player?.balance ?? 0)}</span>
             </Link>
-            <Link href="/leaderboard" data-active={nav.leaderboard} aria-label="Leaderboard" className="lx-chip hidden h-11 w-11 md:inline-flex"><Trophy className="h-[18px] w-[18px]" /></Link>
-            <Link href="/rewards" data-active={nav.rewards} aria-label="Rewards" className="lx-chip hidden h-11 w-11 md:inline-flex"><Gift className="h-[18px] w-[18px]" /></Link>
-            <button type="button" onClick={onOpenMenu} data-active={menuOpen || nav.other} aria-haspopup="dialog" aria-label="All sections" className="lx-chip h-11 w-11 md:inline-flex"><LayoutGrid className="h-[18px] w-[18px]" /></button>
-            <Link href="/profile" aria-label={`${name}, open profile`} className="group relative ml-0.5 rounded-full p-[2px] [background:conic-gradient(from_200deg,#fff0bd,#e6c170,#7a5cff,#fff0bd)]">
-              <Avatar name={name} size={40} className="ring-2 ring-[#07080f] transition-transform group-hover:scale-[1.04]" />
-              {mode === "guest" && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-[#07080f] px-1.5 text-[9px] font-semibold text-[#f6e3ae] ring-1 ring-white/15">Guest</span>}
-            </Link>
+            <AccountMenu onLogout={onLogout} />
           </div>
         </header>
 
-        {/* ------------------------- the page itself ------------------------- */}
-        <main ref={scroller} className="lx-scroll relative min-h-0 flex-1 overflow-y-auto overscroll-contain pb-24 md:pb-6">
+        {/* ---------------- workspace ---------------- */}
+        <main ref={scroller} className="lx-work lx-scroll relative min-h-0 flex-1 overflow-y-auto overscroll-contain pb-20 md:pb-0">
           <SearchContext.Provider value={search}>{children}</SearchContext.Provider>
-          <footer className="mx-auto max-w-[1320px] px-5 pb-6 pt-10 sm:px-8">
+          <footer className="px-5 pb-5 pt-8 md:hidden">
             <p className="text-[11px] leading-relaxed text-white/35">
-              SPINVERSE is entertainment only and uses free demo points. Points have no cash value, can’t be purchased, withdrawn or exchanged. 18+.
+              SPINVERSE is entertainment only and uses free demo points. Points have no cash value and can’t be purchased, withdrawn or exchanged. 18+.
               {mode === "guest" && (
                 <>
                   {" "}
@@ -154,44 +179,51 @@ export function LauncherShell({ children, onLogout, onOpenMenu, menuOpen }: { ch
             </p>
           </footer>
         </main>
+
+        {/* ---------------- status bar ---------------- */}
+        <div className="lx-status hidden md:flex">
+          <span className="truncate">Demo mode · free points with no cash value · 18+</span>
+          <span className="flex shrink-0 items-center gap-2">
+            {mode === "guest" && (
+              <Link href="/register" className="font-semibold text-[var(--lx-gold)] hover:underline">Create an account to keep your points</Link>
+            )}
+            <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" /> Online</span>
+          </span>
+        </div>
       </div>
 
-      {/* ---------------- bottom dock (phones) ---------------- */}
-      <nav aria-label="Launcher" className="lx-dock fixed inset-x-0 bottom-0 z-20 grid grid-cols-6 px-1 pt-1 md:hidden">
-        <RailLink compact href="/dashboard" active={nav.games} icon={<Gamepad2 className="h-5 w-5" />} label="Games" />
-        <RailLink compact href="/favorites" active={nav.favorites} icon={<Heart className="h-5 w-5" />} label="Favorites" />
-        <RailLink compact href="/recent" active={nav.recent} icon={<Clock3 className="h-5 w-5" />} label="Recent" />
-        <RailLink compact href="/profile" active={nav.profile} icon={<User className="h-5 w-5" />} label="Profile" />
-        <RailLink compact href="/settings" active={nav.settings} icon={<Settings className="h-5 w-5" />} label="Settings" />
-        <RailButton compact onClick={onLogout} icon={<LogOut className="h-5 w-5" />} label="Log out" />
+      {/* ---------------- dock (phones) ---------------- */}
+      <nav aria-label="Main" className="lx-dock fixed inset-x-0 bottom-0 z-20 grid grid-cols-6 px-1 pt-1 md:hidden">
+        {DOCK.map((item) => (
+          <DockLink key={item.href} item={item} active={isActive(item)} />
+        ))}
+        <button type="button" onClick={onOpenMenu} aria-haspopup="dialog" className="lx-navbtn">
+          <span className="relative"><Menu className="h-5 w-5" /></span>
+          <span className="relative text-[10px] font-medium leading-none">More</span>
+        </button>
       </nav>
     </div>
   );
 }
 
-function RailInner({ icon, label, active, compact }: { icon: ReactNode; label: string; active?: boolean; compact?: boolean }) {
+function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+  const Icon = item.icon;
   return (
-    <>
-      {active && <motion.span layoutId={compact ? "lx-active-dock" : "lx-active-rail"} className="absolute inset-0 rounded-2xl bg-[linear-gradient(180deg,rgba(230,193,112,.16),rgba(230,193,112,.04))] shadow-[inset_0_0_0_1px_rgba(230,193,112,.35)]" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
-      {active && !compact && <motion.span layoutId="lx-active-bar" className="absolute -left-2.5 top-3 bottom-3 w-[3px] rounded-r-full bg-[var(--lx-gold)] shadow-[0_0_12px_var(--lx-gold)]" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
-      <span className="relative">{icon}</span>
-      <span className={compact ? "relative text-[10px] font-medium leading-none" : "relative text-[11px] font-medium leading-none"}>{label}</span>
-    </>
-  );
-}
-
-function RailButton({ icon, label, onClick, compact }: { icon: ReactNode; label: string; onClick: () => void; compact?: boolean }) {
-  return (
-    <button type="button" onClick={onClick} className="lx-navbtn">
-      <RailInner icon={icon} label={label} compact={compact} />
-    </button>
-  );
-}
-
-function RailLink({ icon, label, href, active, compact }: { icon: ReactNode; label: string; href: string; active?: boolean; compact?: boolean }) {
-  return (
-    <Link href={href} data-active={!!active} aria-current={active ? "page" : undefined} className="lx-navbtn">
-      <RailInner icon={icon} label={label} active={active} compact={compact} />
+    <Link href={item.href} data-active={active} aria-current={active ? "page" : undefined} aria-label={item.label} title={item.label} className="lx-nav">
+      <Icon className="h-[18px] w-[18px]" />
+      <span className="hidden truncate lg:inline">{item.label}</span>
     </Link>
   );
 }
+
+function DockLink({ item, active }: { item: NavItem; active: boolean }) {
+  const Icon = item.icon;
+  const short = item.label === "Explore Games" ? "Explore" : item.label;
+  return (
+    <Link href={item.href} data-active={active} aria-current={active ? "page" : undefined} className="lx-navbtn">
+      <span className="relative"><Icon className="h-5 w-5" /></span>
+      <span className="relative text-[10px] font-medium leading-none">{short}</span>
+    </Link>
+  );
+}
+

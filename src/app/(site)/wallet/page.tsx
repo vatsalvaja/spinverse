@@ -109,14 +109,14 @@ export default function WalletPage() {
       </PageBanner>
 
       <Wrap className="mb-6">
-        <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 [background:linear-gradient(135deg,rgba(230,193,112,.14),rgba(122,92,255,.10)_60%,rgba(8,9,18,.6))] [box-shadow:inset_0_0_0_1px_rgba(230,193,112,.28),0_30px_70px_-40px_rgba(0,0,0,.9)]">
+        <div className="relative overflow-hidden rounded-3xl p-5 sm:p-6 [background:linear-gradient(135deg,rgba(230,193,112,.14),rgba(122,92,255,.10)_60%,rgba(8,9,18,.6))] [box-shadow:inset_0_0_0_1px_rgba(230,193,112,.28),0_30px_70px_-40px_rgba(0,0,0,.9)]">
           <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#e6c170]/15 blur-3xl" aria-hidden />
           <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-5">
-              <span className="lx-coin h-14 w-14 shrink-0 rounded-full sm:h-16 sm:w-16" aria-hidden />
+              <span className="lx-coin h-10 w-10 shrink-0 rounded-full sm:h-11 sm:w-11" aria-hidden />
               <div>
                 <p className="text-sm text-obsidian-200">Balance</p>
-                <p className="sv-num sv-gold-text text-[clamp(2.4rem,7vw,4rem)] font-extrabold leading-none"><CountUp value={player.balance} /></p>
+                <p className="sv-num sv-gold-text text-[clamp(1.8rem,5vw,2.4rem)] font-extrabold leading-none"><CountUp value={player.balance} /></p>
                 <p className="mt-1 text-xs text-obsidian-300">free demo points</p>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function WalletPage() {
                   </div>
                   <span className={cn("flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] ring-1 ring-white/10", tone)}><Icon className="h-[18px] w-[18px]" /></span>
                 </div>
-                <p className="sv-num mt-4 text-[2.6rem] font-extrabold leading-none text-white">{formatPoints(value)}</p>
+                <p className="sv-num mt-4 text-[1.9rem] font-extrabold leading-none text-white">{formatPoints(value)}</p>
                 <p className={cn("mt-2 text-sm font-medium", tone)}>{week}</p>
                 <div className="-mx-1 mt-3"><Spark values={spark} color={color} /></div>
               </div>
@@ -151,7 +151,7 @@ export default function WalletPage() {
           </div>
         </Reveal>
 
-        <Reveal className="mt-14">
+        <Reveal className="mt-8">
           <SectionHeader kicker="Every point, accounted for" title="The ledger" subtitle={`${all.length} entries, newest first.`} />
           <div className="sv-scroll-x mb-8 flex gap-2 overflow-x-auto" role="tablist" aria-label="Filter transactions">
             {FILTERS.map((f) => (

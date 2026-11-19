@@ -36,7 +36,7 @@ function PlayerCard({ children }: { children: ReactNode }) {
   };
   const leave = () => ref.current && (ref.current.style.transform = "perspective(900px) rotateX(0) rotateY(0)");
   return (
-    <div onPointerMove={move} onPointerLeave={leave} ref={ref} className="sv-chamfer relative w-full max-w-[340px] border border-gold-200/40 bg-gradient-to-br from-[#2a2112]/90 via-[#12121a]/95 to-[#0a0a10]/95 p-6 shadow-[0_40px_80px_-30px_rgba(0,0,0,.9)] backdrop-blur transition-transform duration-200 ease-out" style={{ transformStyle: "preserve-3d" }}>
+    <div onPointerMove={move} onPointerLeave={leave} ref={ref} className="sv-chamfer relative w-full max-w-[300px] border border-gold-200/40 bg-gradient-to-br from-[#2a2112]/90 via-[#12121a]/95 to-[#0a0a10]/95 p-6 shadow-[0_40px_80px_-30px_rgba(0,0,0,.9)] backdrop-blur transition-transform duration-200 ease-out" style={{ transformStyle: "preserve-3d" }}>
       <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) var(--sheen, 50%), transparent 70%)" }} />
       {children}
     </div>
@@ -104,17 +104,17 @@ export default function ProfilePage() {
     <div className="pb-10">
       <section className="mb-8 pt-3 sm:pt-5">
         <Wrap>
-        <div className="relative isolate grid items-center gap-8 overflow-hidden rounded-3xl p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] [box-shadow:inset_0_0_0_1px_rgba(255,255,255,.08),0_30px_70px_-40px_rgba(0,0,0,.9)]" style={{ background: `radial-gradient(60% 80% at 8% 100%, ${fw.glow}, transparent 70%), linear-gradient(180deg, rgba(20,22,38,.9), rgba(8,9,18,.92))` }}>
+        <div className="relative isolate grid items-center gap-8 overflow-hidden rounded-3xl p-5 sm:p-6 lg:grid-cols-[1.4fr_1fr] [box-shadow:inset_0_0_0_1px_rgba(255,255,255,.08),0_30px_70px_-40px_rgba(0,0,0,.9)]" style={{ background: `radial-gradient(60% 80% at 8% 100%, ${fw.glow}, transparent 70%), linear-gradient(180deg, rgba(20,22,38,.9), rgba(8,9,18,.92))` }}>
           <div className="sv-rise-in">
             <div className="flex flex-col gap-7 sm:flex-row sm:items-center">
               <div className="relative shrink-0">
-                <Ring value={player.totalEarned % 5000} max={5000} size={150} stroke={5} color={fw.primary}>
-                  <HexAvatar name={player.name} size={104} />
+                <Ring value={player.totalEarned % 5000} max={5000} size={116} stroke={5} color={fw.primary}>
+                  <HexAvatar name={player.name} size={80} />
                 </Ring>
                 <span className="sv-num absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-gold-200/60 bg-obsidian-900 px-3.5 py-1 text-sm font-bold text-gold-100 shadow-lg">LEVEL {level}</span>
               </div>
               <div className="min-w-0">
-                <h1 className="sv-display text-balance text-[clamp(1.6rem,3.6vw,2.6rem)] font-bold leading-[1.05] text-white">{player.name}</h1>
+                <h1 className="sv-display text-balance text-[clamp(1.4rem,3vw,1.9rem)] font-bold leading-[1.05] text-white">{player.name}</h1>
                 <p className="mt-1.5 text-base text-obsidian-100">@{player.username}</p>
                 <div className="mt-4 flex flex-wrap items-center gap-2.5">
                   <MembershipBadge tier={player.membership} />
@@ -156,7 +156,7 @@ export default function ProfilePage() {
             {stats.map(({ icon: Icon, label, value }) => (
               <div key={label} className="sv-glass rounded-3xl p-5 sm:p-6">
                 <Icon className="h-5 w-5 text-gold-300" />
-                <p className="sv-num mt-3 text-[2rem] font-extrabold leading-none text-white sm:text-[2.4rem]">{value}</p>
+                <p className="sv-num mt-3 text-[1.5rem] font-extrabold leading-none text-white sm:text-[1.75rem]">{value}</p>
                 <p className="mt-2 text-sm text-obsidian-200">{label}</p>
               </div>
             ))}
@@ -164,9 +164,9 @@ export default function ProfilePage() {
         </Reveal>
 
         {/* favorite world + mastery */}
-        <div className="mt-14 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
           <Reveal>
-            <article data-parallax-root className={cn("group relative isolate flex min-h-[340px] items-end overflow-hidden bg-black", fw.shapeClass)}>
+            <article data-parallax-root className={cn("group relative isolate flex min-h-[220px] items-end overflow-hidden bg-black", fw.shapeClass)}>
               <div className="absolute inset-0 -z-10 transition-transform duration-[1400ms] group-hover:scale-[1.05]"><LiveArt gameId={player.favoriteGame} /></div>
               <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/35 to-transparent" />
               <div className="absolute inset-0 -z-10" style={{ background: `radial-gradient(80% 60% at 20% 100%, ${fw.glow}, transparent 70%)` }} />
@@ -205,7 +205,7 @@ export default function ProfilePage() {
         </div>
 
         {/* medal showcase */}
-        <Reveal className="mt-14">
+        <Reveal className="mt-8">
           <SectionHeader kicker="Your finest" title="Medal showcase" action={<Link href="/achievements" className="text-sm font-semibold text-gold-300 hover:text-gold-100">All medals</Link>} />
           <div className="sv-panel p-6 sm:p-10">
             <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
@@ -237,7 +237,7 @@ export default function ProfilePage() {
         </Reveal>
 
         {/* account details */}
-        <Reveal className="mt-14">
+        <Reveal className="mt-8">
           <SectionHeader kicker="Account" title="Details" />
           <dl className="grid gap-4 md:grid-cols-3">
             {[

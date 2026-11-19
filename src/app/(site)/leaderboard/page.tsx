@@ -19,9 +19,9 @@ const METRICS = [
 ] as const;
 
 const PLATE = {
-  1: { grad: "from-[#fff3c4] via-[#e3b951] to-[#8a5f14]", text: "text-[#3a2407]", h: "h-60 sm:h-72", ring: "ring-gold-200" },
-  2: { grad: "from-[#f2f4fa] via-[#a8aec2] to-[#555a6b]", text: "text-[#20222c]", h: "h-44 sm:h-52", ring: "ring-[#c9ccd8]" },
-  3: { grad: "from-[#ffd9b0] via-[#c9803f] to-[#6b3a14]", text: "text-[#2e1807]", h: "h-36 sm:h-44", ring: "ring-[#d08c4f]" },
+  1: { grad: "from-[#fff3c4] via-[#e3b951] to-[#8a5f14]", text: "text-[#3a2407]", h: "h-44 sm:h-52", ring: "ring-gold-200" },
+  2: { grad: "from-[#f2f4fa] via-[#a8aec2] to-[#555a6b]", text: "text-[#20222c]", h: "h-36 sm:h-40", ring: "ring-[#c9ccd8]" },
+  3: { grad: "from-[#ffd9b0] via-[#c9803f] to-[#6b3a14]", text: "text-[#2e1807]", h: "h-28 sm:h-32", ring: "ring-[#d08c4f]" },
 } as const;
 
 export default function LeaderboardPage() {
@@ -68,7 +68,7 @@ export default function LeaderboardPage() {
                   <p className="mt-3 max-w-full truncate px-1 text-center text-sm font-semibold text-white sm:text-base">{user.name}</p>
                   <p className="sv-num mb-3 text-lg font-bold text-gold-100 sm:text-2xl">{formatPoints(user[metric])}</p>
                   <div className={cn("sv-chamfer relative flex w-full items-start justify-center bg-gradient-to-b pt-3", p.grad, p.h)}>
-                    <span className={cn("sv-num text-6xl font-extrabold leading-none sm:text-8xl", p.text)}>{rank}</span>
+                    <span className={cn("sv-num text-4xl font-extrabold leading-none sm:text-5xl", p.text)}>{rank}</span>
                     <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/35 to-transparent" />
                   </div>
                 </div>
@@ -83,7 +83,7 @@ export default function LeaderboardPage() {
             <div className="sv-glass flex flex-wrap items-center gap-x-8 gap-y-4 rounded-[2rem] border-gold-300/30 p-6">
               <div>
                 <p className="text-xs text-obsidian-200">Your standing</p>
-                <p className="sv-num sv-gold-text text-5xl font-extrabold leading-none">#{me.rank}</p>
+                <p className="sv-num sv-gold-text text-3xl font-extrabold leading-none">#{me.rank}</p>
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-white">{formatPoints(me.user[metric])} <span className="text-obsidian-200">{metricLabel.toLowerCase()}</span></p>
