@@ -96,6 +96,7 @@ export function gameStats(txs: Transaction[]) {
     "pharaohs-fortune": { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
     "atlantis-cascade": { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
     "neon-overdrive": { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
+    skyfall: { sessions: 0, spins: 0, players: new Set(), spent: 0, returned: 0 },
   };
   for (const t of txs) {
     if (t.status !== "completed" || !t.game) continue;

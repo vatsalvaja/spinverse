@@ -21,6 +21,7 @@ const LABEL: Record<GameId, string> = {
   "pharaohs-fortune": "Illustration of a golden sun rising behind desert pyramids",
   "atlantis-cascade": "Illustration of a sunken city with glowing gems tumbling through the water",
   "neon-overdrive": "Illustration of a neon cyberpunk skyline above a glowing grid",
+  skyfall: "Illustration of a futuristic aircraft climbing above a midnight city skyline",
 };
 
 function Pharaoh() {
@@ -218,8 +219,47 @@ function Neon() {
   );
 }
 
+function Skyfall() {
+  const towers: [number, number, number][] = [[0, 190, 34], [34, 160, 28], [62, 205, 40], [102, 175, 26], [128, 215, 36], [164, 150, 30], [194, 195, 38], [232, 170, 28], [260, 210, 34], [294, 160, 30], [324, 200, 38], [362, 178, 38]];
+  return (
+    <g>
+      <defs>
+        <linearGradient id="sf-sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#030816" />
+          <stop offset=".6" stopColor="#0b2146" />
+          <stop offset="1" stopColor="#0f5f7a" />
+        </linearGradient>
+        <linearGradient id="sf-trail" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#22d3ee" stopOpacity="0" />
+          <stop offset="1" stopColor="#22d3ee" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="300" fill="url(#sf-sky)" />
+      {[[40, 30], [90, 60], [150, 22], [210, 48], [260, 20], [330, 40], [370, 70], [120, 90]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={i % 3 === 0 ? 1.4 : 0.9} fill="#dff7ff" opacity=".8" />
+      ))}
+      <path d="M40 230 C 120 220, 190 170, 290 90" fill="none" stroke="url(#sf-trail)" strokeWidth="3" strokeLinecap="round" />
+      <g transform="translate(290 90) rotate(-32)">
+        <path d="M18 0 L-14 -10 L-8 0 L-14 10 Z" fill="#0d1a38" stroke="#e6c170" strokeWidth=".8" />
+        <path d="M-8 0 L-24 -2 L-24 2 Z" fill="#22d3ee" />
+        <circle cx="-9" cy="-5" r="2" fill="#7df4ff" />
+        <circle cx="-9" cy="5" r="2" fill="#7df4ff" />
+      </g>
+      <g fill="#050b1c">
+        {towers.map(([x, h, w], i) => (
+          <rect key={i} x={x} y={300 - h + 60} width={w} height={h} />
+        ))}
+      </g>
+      <g fill="#e6c170" opacity=".75">
+        {towers.flatMap(([x, h, w], i) => [0, 1, 2].map((k) => <rect key={`${i}-${k}`} x={x + 6 + k * 9} y={300 - h + 80 + ((i * 13 + k * 17) % 60)} width="3" height="4" />))}
+      </g>
+    </g>
+  );
+}
+
 const ART: Record<GameId, () => JSX.Element> = {
   "pharaohs-fortune": Pharaoh,
   "atlantis-cascade": Atlantis,
   "neon-overdrive": Neon,
+  skyfall: Skyfall,
 };

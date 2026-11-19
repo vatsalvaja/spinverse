@@ -1,4 +1,4 @@
-import { Gauge, Layers, Orbit, Repeat, Sparkles, Sun, Waves, Zap, type LucideIcon } from "lucide-react";
+import { Gauge, Layers, Orbit, Repeat, Sparkles, Sun, TrendingUp, Waves, Zap, type LucideIcon } from "lucide-react";
 import type { GameId } from "@/data/types";
 
 export interface Feature {
@@ -23,6 +23,11 @@ export const FEATURES: Record<GameId, Feature[]> = {
     { title: "Hold & Respin", text: "Glowing orbs lock in place while the rest of the board respins.", icon: Repeat },
     { title: "Orb tiers", text: "Each orb carries a point value that climbs through jackpot-style tiers.", icon: Orbit },
     { title: "Turbo mode", text: "Shorter animations for players who like the night to move fast.", icon: Zap },
+  ],
+  skyfall: [
+    { title: "Two independent bet panels", text: "Set up two bets with their own stakes. Cashing out one never touches the other.", icon: Layers },
+    { title: "Auto cash-out", text: "Pick a multiplier and let the panel cash out for you before the sky falls.", icon: Zap },
+    { title: "Rising multiplier", text: "The multiplier climbs as the aircraft flies. Cash out before it crashes.", icon: TrendingUp },
   ],
 };
 

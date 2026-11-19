@@ -21,6 +21,7 @@ export const ART: Record<GameId, WorldAssets> = {
   "pharaohs-fortune": make("pharaoh"),
   "atlantis-cascade": make("atlantis"),
   "neon-overdrive": make("neon"),
+  skyfall: make("skyfall"),
 };
 
 export const VAULT_ART = { door: "/art/vault/door.webp", wheel: "/art/vault/wheel.webp" };

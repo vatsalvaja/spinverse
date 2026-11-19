@@ -1,4 +1,4 @@
-export type GameId = "pharaohs-fortune" | "atlantis-cascade" | "neon-overdrive";
+export type GameId = "pharaohs-fortune" | "atlantis-cascade" | "neon-overdrive" | "skyfall";
 
 export type AccountType = "Guest" | "Registered";
 export type AccountStatus = "active" | "inactive" | "blocked";

@@ -47,4 +47,15 @@ export const WORLD: Record<GameId, WorldTheme> = {
     mood: "Electric violet and rain-slick neon",
     ctaText: "#1a0230",
   },
+  skyfall: {
+    titleClass: "font-display font-extrabold tracking-[0.14em] text-white",
+    shapeClass: "rounded-[1.6rem]",
+    primary: "#22d3ee",
+    secondary: "#e6c170",
+    deep: "#050b1c",
+    glow: "rgba(34,211,238,.4)",
+    kicker: "Above the city",
+    mood: "Midnight navy, electric cyan and brushed gold",
+    ctaText: "#031620",
+  },
 };

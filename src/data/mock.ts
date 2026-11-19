@@ -61,7 +61,8 @@ const SEEDS: Seed[] = [
   [1028, "Guest 3367", "guest_3367", "", "Guest", "2026-11-14", "blocked", 400, "Guest", "Brazil"],
 ];
 
-const GAME_IDS: GameId[] = GAMES.map((g) => g.id);
+// seeded history is drawn from the three original games only, so adding a game never reshuffles existing demo data
+const GAME_IDS: GameId[] = ["pharaohs-fortune", "atlantis-cascade", "neon-overdrive"];
 const GAME_NAME: Record<GameId, string> = Object.fromEntries(GAMES.map((g) => [g.id, g.name])) as Record<GameId, string>;
 
 const REWARD_TEXT = [

@@ -7,7 +7,7 @@ export interface Game {
   description: string;
   theme: string;
   concept: string;
-  category: "Classic Slots" | "Cascading Reels" | "Hold & Respin";
+  category: "Classic Slots" | "Cascading Reels" | "Hold & Respin" | "Crash";
   tags: string[];
   grid: string;
   volatility: "Low" | "Medium" | "High";
@@ -80,6 +80,26 @@ export const GAMES: Game[] = [
     isNew: true,
     accent: "#c24fd1",
     accentSoft: "rgba(194,79,209,.25)",
+  },
+  {
+    id: "skyfall",
+    name: "SKYFALL",
+    tagline: "Ride the multiplier. Cash out before the sky falls.",
+    description:
+      "Watch a sleek aircraft climb above a midnight city while the multiplier rises. Run two independent demo bet panels, cash out by hand or set an auto cash-out, and play with free demo points only.",
+    theme: "Futuristic night city",
+    concept: "Crash multiplier",
+    category: "Crash",
+    tags: ["Crash multiplier", "Two bet panels", "Auto cash-out"],
+    grid: "Crash",
+    volatility: "High",
+    rating: 4.6,
+    playersNow: 842,
+    releasedAt: "2026-11-18",
+    featured: true,
+    isNew: true,
+    accent: "#22d3ee",
+    accentSoft: "rgba(34,211,238,.25)",
   },
 ];
 
