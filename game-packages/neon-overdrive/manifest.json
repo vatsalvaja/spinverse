@@ -1,0 +1,23 @@
+{
+  "gameId": "neon-overdrive",
+  "name": "Neon Overdrive",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "Hold & Respin in a cyberpunk skyline. Lock glowing orbs, respin for point tiers and chase the Grand. Free demo credits only.",
+  "assets": {
+    "thumbnail": "assets/thumbnail.webp",
+    "images": "assets/art/"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "orientation": "both"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}

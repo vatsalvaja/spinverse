@@ -1,0 +1,22 @@
+{
+  "gameId": "roulette",
+  "name": "Roulette",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "European roulette with a single zero, the full table layout and every inside and outside bet. Free demo credits only.",
+  "assets": {
+    "thumbnail": "assets/thumbnail.webp"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "orientation": "both"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}

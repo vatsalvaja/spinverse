@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock3, Heart, Search } from "lucide-react";
-import { usePlay } from "@/components/site/PlayModal";
-import { GAMES, type Game } from "@/data/games";
+import type { Game } from "@/data/games";
+import { useCatalogue } from "@/features/game-management/player/catalogue";
+import type { InstallProps } from "@/features/game-management/player/components/InstallActions";
+import { useInstallFlow } from "@/features/game-management/player/download-manager/useInstallFlow";
 import { useSession } from "@/lib/session";
 import { GameTile } from "./GameTile";
 import { useLauncherSearch } from "./LauncherShell";
@@ -17,25 +19,37 @@ const TITLE: Record<LibraryView, string> = { all: "Library", favorites: "Favorit
 
 /** The game library workspace: compact fixed-size tiles that wrap into as many columns as fit, for 3 games or 300. */
 export function GameLibrary({ view = "all" }: { view?: LibraryView }) {
-  const play = usePlay();
+  const flow = useInstallFlow();
+  const { games: catalogue, byId } = useCatalogue();
   const { favorites, recent, toggleFavorite } = useSession();
   const { query, setQuery } = useLauncherSearch();
-  const [selected, setSelected] = useState<string>(GAMES[0]?.id ?? "");
+  const [selected, setSelected] = useState<string>(catalogue[0]?.id ?? "");
   const [category, setCategory] = useState("all");
   const gridRef = useRef<HTMLDivElement>(null);
 
+  // only published games are in the catalogue, so favorites and recents resolve through it too
   const base = useMemo<Game[]>(() => {
-    if (view === "favorites") return GAMES.filter((g) => favorites.includes(g.id));
-    if (view === "recent") return recent.map((id) => GAMES.find((g) => g.id === id)).filter((g): g is Game => !!g);
-    return GAMES;
-  }, [view, favorites, recent]);
+    if (view === "favorites") return catalogue.filter((g) => favorites.includes(g.id));
+    if (view === "recent") return recent.map((id) => catalogue.find((g) => g.id === id)).filter((g): g is Game => !!g);
+    return catalogue;
+  }, [view, favorites, recent, catalogue]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return base.filter((g) => (category === "all" || g.category === category) && (!q || [g.name, g.theme, g.category, g.concept, ...g.tags].join(" ").toLowerCase().includes(q)));
   }, [base, category, query]);
 
-  const continuing = useMemo(() => recent.map((id) => GAMES.find((g) => g.id === id)).filter((g): g is Game => !!g).slice(0, 4), [recent]);
+  const continuing = useMemo(() => recent.map((id) => catalogue.find((g) => g.id === id)).filter((g): g is Game => !!g).slice(0, 4), [recent, catalogue]);
+
+  const play = (g: Game) => {
+    const entry = byId[g.id as string];
+    if (entry) flow.handlePlay(entry);
+  };
+  const installFor = (g: Game): InstallProps | undefined => {
+    const entry = byId[g.id as string];
+    if (!entry) return undefined;
+    return { status: entry.info.status, progress: entry.info.download?.progress, maintenanceMessage: entry.info.maintenanceMessage, onInstall: () => flow.requestInstall(entry), onUpdate: () => flow.requestUpdate(entry) };
+  };
 
   // keep the active selection pointing at something on screen
   useEffect(() => {
@@ -63,7 +77,7 @@ export function GameLibrary({ view = "all" }: { view?: LibraryView }) {
           <div className="lx-section"><h2>Continue playing</h2></div>
           <div className="lx-scroll -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
             {continuing.map((g) => (
-              <ContinueCard key={g.id} game={g} onPlay={() => play(g.id)} />
+              <ContinueCard key={g.id} game={g} onPlay={() => play(g)} />
             ))}
           </div>
         </section>
@@ -92,7 +106,7 @@ export function GameLibrary({ view = "all" }: { view?: LibraryView }) {
           >
             <div className="lx-lib" style={{ justifyContent: "start" }}>
               {visible.map((g, i) => (
-                <GameTile key={g.id} game={g} index={i} selected={selected === g.id} favorite={favorites.includes(g.id)} onSelect={() => setSelected(g.id)} onPlay={() => play(g.id)} onFavorite={() => toggleFavorite(g.id)} />
+                <GameTile key={g.id} game={g} index={i} selected={selected === g.id} favorite={favorites.includes(g.id)} onSelect={() => setSelected(g.id)} onPlay={() => play(g)} onFavorite={() => toggleFavorite(g.id)} install={installFor(g)} />
               ))}
             </div>
           </motion.div>
@@ -111,6 +125,7 @@ export function GameLibrary({ view = "all" }: { view?: LibraryView }) {
           </motion.div>
         )}
       </AnimatePresence>
+      {flow.dialogs}
     </div>
   );
 }

@@ -5,8 +5,10 @@ import { ChevronDown, LayoutGrid, List, SearchX } from "lucide-react";
 import { GameTile } from "@/components/launcher/GameTile";
 import { useLauncherSearch } from "@/components/launcher/LauncherShell";
 import { CategoryTabs, GameRow } from "@/components/launcher/libraryParts";
-import { usePlay } from "@/components/site/PlayModal";
-import { GAMES } from "@/data/games";
+import type { Game } from "@/data/games";
+import { useCatalogue } from "@/features/game-management/player/catalogue";
+import type { InstallProps } from "@/features/game-management/player/components/InstallActions";
+import { useInstallFlow } from "@/features/game-management/player/download-manager/useInstallFlow";
 import { useSession } from "@/lib/session";
 
 const SORTS = [
@@ -20,7 +22,8 @@ type Layout = "grid" | "list";
 
 /** Explore: every game, with category tabs, sorting and a grid or list view. */
 export default function ExplorePage() {
-  const play = usePlay();
+  const flow = useInstallFlow();
+  const { games: GAMES, byId } = useCatalogue();
   const { favorites, toggleFavorite } = useSession();
   const { query, setQuery } = useLauncherSearch();
   const [category, setCategory] = useState("all");
@@ -52,7 +55,17 @@ export default function ExplorePage() {
         default: return b.playersNow - a.playersNow;
       }
     });
-  }, [query, category, sort]);
+  }, [GAMES, query, category, sort]);
+
+  const play = (g: Game) => {
+    const entry = byId[g.id as string];
+    if (entry) flow.handlePlay(entry);
+  };
+  const installFor = (g: Game): InstallProps | undefined => {
+    const entry = byId[g.id as string];
+    if (!entry) return undefined;
+    return { status: entry.info.status, progress: entry.info.download?.progress, maintenanceMessage: entry.info.maintenanceMessage, onInstall: () => flow.requestInstall(entry), onUpdate: () => flow.requestUpdate(entry) };
+  };
 
   useEffect(() => {
     if (list.length && !list.some((g) => g.id === selected)) setSelected(list[0].id);
@@ -93,16 +106,17 @@ export default function ExplorePage() {
       ) : layout === "grid" ? (
         <div className="lx-lib" style={{ justifyContent: "start" }}>
           {list.map((g, i) => (
-            <GameTile key={g.id} game={g} index={i} selected={selected === g.id} favorite={favorites.includes(g.id)} onSelect={() => setSelected(g.id)} onPlay={() => play(g.id)} onFavorite={() => toggleFavorite(g.id)} />
+            <GameTile key={g.id} game={g} index={i} selected={selected === g.id} favorite={favorites.includes(g.id)} onSelect={() => setSelected(g.id)} onPlay={() => play(g)} onFavorite={() => toggleFavorite(g.id)} install={installFor(g)} />
           ))}
         </div>
       ) : (
         <div className="space-y-2">
           {list.map((g) => (
-            <GameRow key={g.id} game={g} selected={selected === g.id} favorite={favorites.includes(g.id)} onSelect={() => setSelected(g.id)} onPlay={() => play(g.id)} onFavorite={() => toggleFavorite(g.id)} />
+            <GameRow key={g.id} game={g} selected={selected === g.id} favorite={favorites.includes(g.id)} onSelect={() => setSelected(g.id)} onPlay={() => play(g)} onFavorite={() => toggleFavorite(g.id)} install={installFor(g)} />
           ))}
         </div>
       )}
+      {flow.dialogs}
     </div>
   );
 }

@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@game-sdk/*": [
+        "./game-packages/_sdk/src/*"
       ]
     }
   },
@@ -36,6 +39,8 @@
     ".next-check/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "game-packages",
+    "packages"
   ]
 }

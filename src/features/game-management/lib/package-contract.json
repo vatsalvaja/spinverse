@@ -1,0 +1,24 @@
+{
+  "_comment": "Single source of truth for the game package contract. Read by the admin UI (lib/constants.ts) and by the Package Builder (scripts/package-games). Keep it plain JSON so Node can require() it.",
+  "maxPackageBytes": 262144000,
+  "warnPackageBytes": 157286400,
+  "manifest": {
+    "fileName": "manifest.json",
+    "requiredFields": ["gameId", "name", "version", "entryPoint", "description", "assets", "compatibility"],
+    "gameIdPattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+    "gameIdMinLength": 3,
+    "gameIdMaxLength": 40,
+    "versionPattern": "^\\d+\\.\\d+\\.\\d+$",
+    "descriptionMaxLength": 160,
+    "platforms": ["desktop", "tablet", "mobile"],
+    "orientations": ["landscape", "portrait", "both"],
+    "thumbnailExtensions": [".png", ".jpg", ".jpeg", ".webp", ".svg"]
+  },
+  "structure": {
+    "forbiddenDirectories": ["node_modules", ".git", ".github", ".vscode", "server", "backend", "__MACOSX"],
+    "forbiddenFileNames": ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "npm-shrinkwrap.json", "Dockerfile", "docker-compose.yml"],
+    "forbiddenFilePrefixes": [".env"],
+    "forbiddenExtensions": [".map", ".pem", ".key", ".p12", ".pfx", ".ts", ".tsx", ".jsx", ".vue", ".svelte", ".scss", ".sass", ".less", ".php", ".py", ".rb", ".java", ".go", ".cs", ".jsp", ".asp", ".aspx", ".sh", ".bat", ".cmd", ".ps1", ".sql", ".db", ".sqlite", ".log", ".tmp", ".swp"],
+    "ignoredFileNames": [".DS_Store", "Thumbs.db", "desktop.ini"]
+  }
+}

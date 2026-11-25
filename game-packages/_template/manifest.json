@@ -1,0 +1,18 @@
+{
+  "gameId": "your-game-id",
+  "name": "Your Game Name",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "Short description shown in the catalogue (160 characters max).",
+  "assets": {
+    "thumbnail": "assets/thumbnail.svg"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": ["desktop", "tablet", "mobile"],
+    "orientation": "landscape"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}

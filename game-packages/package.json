@@ -1,0 +1,10 @@
+{
+  "name": "spinverse-game-packages",
+  "private": true,
+  "version": "0.0.0",
+  "description": "npm workspace root for game packages. It exists only so every game shares ONE node_modules install; each game still declares its own dependencies and builds on its own.",
+  "workspaces": ["*"],
+  "overrides": {
+    "csstype": "3.2.3"
+  }
+}

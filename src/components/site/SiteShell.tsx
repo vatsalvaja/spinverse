@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { Award, Clock3, Compass, Gift, Heart, Home, Settings, Target, Trophy, User, Wallet } from "lucide-react";
+import { Award, Clock3, Compass, Gift, HardDriveDownload, Heart, Home, Settings, Target, Trophy, User, Wallet } from "lucide-react";
 import { LauncherShell } from "@/components/launcher/LauncherShell";
 import { PlayProvider } from "@/components/site/PlayModal";
 import { UniverseMenu } from "@/components/site/UniverseMenu";
@@ -14,6 +14,7 @@ const UNIVERSE: { href: string; label: string; note: string; world: GameId; icon
   { href: "/games", label: "Explore Games", note: "Browse and filter", world: "neon-overdrive", icon: Compass },
   { href: "/favorites", label: "Favorites", note: "Games you pinned", world: "neon-overdrive", icon: Heart },
   { href: "/recent", label: "Recently Played", note: "Pick up where you left off", world: "atlantis-cascade", icon: Clock3 },
+  { href: "/installed", label: "Installed Games", note: "Downloaded games", world: "neon-overdrive", icon: HardDriveDownload },
   { href: "/wallet", label: "Vault", note: "Balance and ledger", world: "pharaohs-fortune", icon: Wallet },
   { href: "/leaderboard", label: "Leaderboard", note: "Season rankings", world: "neon-overdrive", icon: Trophy },
   { href: "/missions", label: "Missions", note: "Daily and weekly quests", world: "atlantis-cascade", icon: Target },

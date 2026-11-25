@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, ChevronRight, ExternalLink, FileBarChart, Gamepad2, LayoutDashboard, LineChart, LogOut, Menu as MenuIcon, ReceiptText, Settings, Users, X } from "lucide-react";
+import { Bell, ChevronRight, ExternalLink, FileBarChart, Gamepad2, LayoutDashboard, LineChart, LogOut, Menu as MenuIcon, PackageOpen, ReceiptText, Settings, Users, X } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
 import { Avatar } from "@/components/ui/avatar";
 import { Menu } from "@/components/ui/menu";
@@ -19,6 +19,17 @@ const NAV = [
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/transactions", label: "Transactions", icon: ReceiptText },
   { href: "/admin/games", label: "Games", icon: Gamepad2 },
+  {
+    href: "/admin/game-management",
+    label: "Game Management",
+    icon: PackageOpen,
+    children: [
+      { href: "/admin/game-management", label: "Games overview", exact: true },
+      { href: "/admin/game-management/new", label: "Add new game" },
+      { href: "/admin/game-management/versions", label: "Versions" },
+      { href: "/admin/game-management/configuration", label: "Configuration" },
+    ],
+  },
   { href: "/admin/analytics", label: "Analytics", icon: LineChart },
   { href: "/admin/reports", label: "Reports", icon: FileBarChart },
   { href: "/admin/settings", label: "Settings", icon: Settings },
@@ -38,11 +49,11 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4" aria-label="Admin">
-        {NAV.map(({ href, label, icon: Icon, exact }) => {
+        {NAV.map(({ href, label, icon: Icon, exact, children }) => {
           const active = exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
           return (
+            <div key={href}>
             <Link
-              key={href}
               href={href}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
@@ -56,6 +67,21 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               {label}
               {label === "Users" && blocked > 0 && <span className="ml-auto rounded-md bg-rose-500/20 px-1.5 py-0.5 text-[11px] font-semibold text-rose-300">{blocked}</span>}
             </Link>
+            {children && active && (
+              <ul className="mb-1 ml-[26px] mt-0.5 space-y-0.5 border-l border-white/[0.08] pl-3">
+                {children.map((c) => {
+                  const on = c.exact ? pathname === c.href : pathname === c.href || pathname.startsWith(c.href + "/");
+                  return (
+                    <li key={c.href}>
+                      <Link href={c.href} onClick={onNavigate} aria-current={on ? "page" : undefined} className={cn("block rounded-md px-2.5 py-1.5 text-[13px] transition", on ? "text-gold-300" : "text-slate-500 hover:text-slate-200")}>
+                        {c.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            </div>
           );
         })}
       </nav>
@@ -69,7 +95,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-const CRUMB: Record<string, string> = { admin: "Admin", users: "Users", transactions: "Transactions", games: "Games", analytics: "Analytics", reports: "Reports", settings: "Settings" };
+const CRUMB: Record<string, string> = { admin: "Admin", users: "Users", transactions: "Transactions", games: "Games", "game-management": "Game Management", new: "Add new game", versions: "Versions", configuration: "Configuration", analytics: "Analytics", reports: "Reports", settings: "Settings" };
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter();

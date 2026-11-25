@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from "react";
-import { Award, Clock3, Compass, Gift, Heart, Home, LogOut, Menu, Search, Settings, Target, Trophy, User, Wallet, X } from "lucide-react";
+import { Award, Clock3, Compass, Gift, HardDriveDownload, Heart, Home, LogOut, Menu, Search, Settings, Target, Trophy, User, Wallet, X } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
 import { useSession } from "@/lib/session";
 import { formatPoints } from "@/lib/utils";
@@ -30,6 +30,7 @@ const MAIN: NavItem[] = [
   { href: "/games", label: "Explore Games", icon: Compass },
   { href: "/favorites", label: "Favorites", icon: Heart },
   { href: "/recent", label: "Recently Played", icon: Clock3 },
+  { href: "/installed", label: "Installed Games", icon: HardDriveDownload },
   { href: "/wallet", label: "Vault", icon: Wallet },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -41,7 +42,7 @@ const COMMUNITY: NavItem[] = [
   { href: "/achievements", label: "Achievements", icon: Award },
 ];
 /** The phone dock holds the essentials; "More" opens the full list. */
-const DOCK: NavItem[] = [MAIN[0], MAIN[1], MAIN[2], MAIN[4], MAIN[5]];
+const DOCK: NavItem[] = ["/dashboard", "/games", "/favorites", "/wallet", "/profile"].map((href) => MAIN.find((i) => i.href === href)!);
 
 /**
  * The one frame every player-facing page lives in, like an installed launcher: sidebar, toolbar, workspace and

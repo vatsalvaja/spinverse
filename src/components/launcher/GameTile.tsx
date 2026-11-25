@@ -6,6 +6,7 @@ import { Heart, Play } from "lucide-react";
 import { ART } from "@/components/art/art";
 import type { Game } from "@/data/games";
 import { cn } from "@/lib/utils";
+import { InstallStatusChip, TileInstallAction, type InstallProps } from "@/features/game-management/player/components/InstallActions";
 
 /**
  * Official cover art for a game. The art folders are named after the world ("pharaoh", "atlantis", "neon"),
@@ -25,9 +26,11 @@ interface Props {
   onSelect: () => void;
   onPlay: () => void;
   onFavorite: () => void;
+  /** Optional installation state (Game Management). When omitted the tile behaves exactly as before. */
+  install?: InstallProps;
 }
 
-export function GameTile({ game, index, selected, favorite, onSelect, onPlay, onFavorite }: Props) {
+export function GameTile({ game, index, selected, favorite, onSelect, onPlay, onFavorite, install }: Props) {
   const ref = useRef<HTMLElement>(null);
   const img = useRef<HTMLImageElement>(null);
   const [hover, setHover] = useState(false);
@@ -110,13 +113,18 @@ export function GameTile({ game, index, selected, favorite, onSelect, onPlay, on
           </div>
 
           <div className="pointer-events-none absolute inset-x-2 bottom-2 z-[2] sm:inset-x-2.5 sm:bottom-2.5">
+            {install && install.status !== "installed" && <InstallStatusChip install={install} className="mb-1" />}
             <h2 className="sv-display line-clamp-2 text-balance text-[0.86rem] font-bold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,.95)] sm:text-[0.92rem]">{game.name}</h2>
             <p className="mb-2 mt-0.5 font-num text-[11px] text-white/65">
               <span style={{ color: game.accent }}>{game.grid}</span> · {game.volatility}
             </p>
-            <button type="button" onClick={onPlay} className="lx-play pointer-events-auto text-[13px]">
-              <Play className="h-3.5 w-3.5 fill-current" /> Play
-            </button>
+            {install && (install.status === "not_installed" || install.status === "downloading" || install.status === "maintenance") ? (
+              <TileInstallAction install={install} />
+            ) : (
+              <button type="button" onClick={onPlay} className="lx-play pointer-events-auto text-[13px]">
+                <Play className="h-3.5 w-3.5 fill-current" /> Play
+              </button>
+            )}
           </div>
         </div>
       </article>

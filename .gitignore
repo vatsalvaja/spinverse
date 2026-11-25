@@ -5,3 +5,8 @@ out
 next-env.d.ts
 .next-check
 scripts/art/_preview
+
+# Game Package Builder: generated ZIPs and per-game build output
+/packages/
+game-packages/*/dist/
+/public/local-packages/

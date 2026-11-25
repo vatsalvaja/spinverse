@@ -1,0 +1,11 @@
+{
+  "extends": "../_sdk/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@spinverse/game-sdk": ["../_sdk/src/index.ts"],
+      "@spinverse/game-sdk/*": ["../_sdk/src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

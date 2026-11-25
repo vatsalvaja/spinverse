@@ -1,0 +1,202 @@
+/* ---------- Pharaoh’s Fortune slot ---------- */
+.pf-dim { opacity: 0.38; filter: saturate(0.55) brightness(0.8); transition: opacity 0.4s, filter 0.4s; }
+.pf-win { z-index: 2; animation: pf-win 1.05s ease-in-out infinite; }
+.pf-scatter { z-index: 3; animation: pf-scatter 1.15s ease-in-out infinite; }
+.pf-scatter-idle { filter: drop-shadow(0 0 8px rgba(255, 205, 90, 0.6)); }
+.pf-land { z-index: 3; animation: pf-land 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.pf-anticipate { box-shadow: inset 0 0 0 2px rgba(127, 245, 230, 0.7), inset 0 0 40px rgba(60, 230, 210, 0.35); animation: pf-anticipate 0.5s ease-in-out infinite alternate; }
+@keyframes pf-win {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(255, 214, 110, 0.7)); }
+  50% { transform: scale(1.07); filter: drop-shadow(0 0 14px rgba(255, 214, 110, 1)) drop-shadow(0 0 28px rgba(255, 170, 40, 0.7)); }
+}
+@keyframes pf-scatter {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 8px rgba(120, 255, 235, 0.7)) drop-shadow(0 0 14px rgba(255, 210, 90, 0.8)); }
+  50% { transform: scale(1.13) rotate(-2deg); filter: drop-shadow(0 0 16px rgba(120, 255, 235, 1)) drop-shadow(0 0 30px rgba(255, 210, 90, 1)); }
+}
+@keyframes pf-land {
+  0% { transform: scale(1.5); filter: brightness(2) drop-shadow(0 0 30px #ffe9a0); opacity: 0.2; }
+  60% { transform: scale(0.94); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(255, 214, 110, 0.9)); opacity: 1; }
+}
+@keyframes pf-anticipate { from { opacity: 0.75; } to { opacity: 1; } }
+.pf-burst-p {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 9999px;
+  background: var(--c, #ffd978);
+  box-shadow: 0 0 8px var(--c, #ffd978);
+  animation: pf-burst var(--d, 1s) cubic-bezier(0.15, 0.7, 0.3, 1) var(--delay, 0s) both;
+  pointer-events: none;
+}
+@keyframes pf-burst {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px))) scale(0.2); opacity: 0; }
+}
+@keyframes pf-rays { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .pf-win, .pf-scatter, .pf-land, .pf-anticipate { animation: none; }
+  .pf-burst-p { display: none; }
+}
+
+
+/* ---- Pharaoh’s Fortune: full-screen simulator ---- */
+.pf-root {
+  --top: clamp(48px, 8.5dvh, 88px);
+  --deck: clamp(116px, 23dvh, 220px);
+  --bez: clamp(8px, 1.6dvh, 22px);
+  --ip: clamp(3px, 0.8dvh, 10px);
+  --vpad: clamp(6px, 1.4dvh, 20px);
+  --spin: clamp(84px, 17dvh, 168px);
+  --rh: calc(100dvh - var(--top) - var(--deck) - 2 * var(--vpad) - 2 * var(--bez) - 2 * var(--ip));
+  --rw: max(240px, min(calc(var(--rh) * 5 / 3), calc(100vw - 2 * var(--bez) - 2 * var(--ip) - 12px)));
+}
+@media (orientation: portrait) {
+  .pf-root { --deck: clamp(210px, 31dvh, 300px); --spin: clamp(92px, 13dvh, 132px); }
+}
+/* a winning line coming forward: it pops, then breathes */
+.pf-front { z-index: 5; animation: pf-front-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both, pf-front-pulse 1s ease-in-out 0.45s infinite; }
+@keyframes pf-front-in {
+  from { transform: scale(1); filter: brightness(1); }
+  to { transform: scale(1.14); filter: brightness(1.25) drop-shadow(0 0 14px rgba(255, 220, 120, 1)); }
+}
+@keyframes pf-front-pulse {
+  0%, 100% { transform: scale(1.14); filter: brightness(1.25) drop-shadow(0 0 12px rgba(255, 220, 120, 0.95)) drop-shadow(0 0 26px rgba(255, 170, 40, 0.7)); }
+  50% { transform: scale(1.09); filter: brightness(1.12) drop-shadow(0 0 8px rgba(255, 220, 120, 0.8)); }
+}
+/* cabinet and stage shake: --a is the strength in px, --r the tilt in degrees; the motion decays on its own */
+@keyframes pf-shake {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  8% { transform: translate3d(calc(var(--a) * 1px), calc(var(--a) * -0.6px), 0) rotate(calc(var(--r) * 1deg)); }
+  16% { transform: translate3d(calc(var(--a) * -0.9px), calc(var(--a) * 0.7px), 0) rotate(calc(var(--r) * -1deg)); }
+  26% { transform: translate3d(calc(var(--a) * 0.75px), calc(var(--a) * 0.5px), 0) rotate(calc(var(--r) * 0.8deg)); }
+  38% { transform: translate3d(calc(var(--a) * -0.6px), calc(var(--a) * -0.4px), 0) rotate(calc(var(--r) * -0.7deg)); }
+  52% { transform: translate3d(calc(var(--a) * 0.4px), calc(var(--a) * 0.3px), 0) rotate(calc(var(--r) * 0.4deg)); }
+  68% { transform: translate3d(calc(var(--a) * -0.25px), calc(var(--a) * -0.2px), 0) rotate(calc(var(--r) * -0.2deg)); }
+  84% { transform: translate3d(calc(var(--a) * 0.12px), calc(var(--a) * 0.1px), 0); }
+}
+.pf-shake-1 { --a: 2; --r: 0.1; animation: pf-shake 0.6s ease-out; }
+.pf-shake-2 { --a: 5; --r: 0.25; animation: pf-shake 1.1s ease-out; }
+.pf-shake-3 { --a: 9; --r: 0.4; animation: pf-shake 1.7s ease-out; }
+.pf-shake-4 { --a: 13; --r: 0.55; animation: pf-shake 2.6s ease-out; }
+.pf-stage-shake-2 { --a: 1.5; --r: 0; animation: pf-shake 1.1s ease-out; }
+.pf-stage-shake-3 { --a: 3.5; --r: 0.05; animation: pf-shake 1.7s ease-out; }
+.pf-stage-shake-4 { --a: 6; --r: 0.1; animation: pf-shake 2.6s ease-out; }
+/* golden light flash around the machine */
+.pf-flash {
+  box-shadow: inset 0 0 14vmin 4vmin rgba(255, 214, 110, 0.8);
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(255, 214, 110, 0.16));
+  animation: pf-flash 0.55s ease-out both;
+}
+@keyframes pf-flash { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+/* chasing bulbs, glass sheen, light shafts */
+.pf-bulbs {
+  background: radial-gradient(circle, #fff3c0 0 2px, rgba(255, 200, 80, 0.5) 3px, transparent 4px) 0 0 / 18px 6px repeat-x;
+  filter: drop-shadow(0 0 3px rgba(255, 200, 80, 0.9));
+  animation: pf-bulb 1.2s ease-in-out infinite;
+}
+.pf-bulbs-b { animation-delay: -0.6s; }
+@keyframes pf-bulb { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.pf-glass {
+  overflow: hidden;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 28%, transparent 42%), linear-gradient(295deg, rgba(255, 214, 110, 0.07), transparent 35%);
+}
+.pf-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.13) 50%, transparent 60%);
+  transform: translateX(-120%);
+  animation: pf-glint 9s ease-in-out infinite;
+}
+@keyframes pf-glint { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+.pf-beams {
+  background: conic-gradient(from 200deg at 50% -10%, transparent 0 8%, rgba(255, 214, 110, 0.1) 10% 12%, transparent 14% 24%, rgba(255, 214, 110, 0.07) 26% 28%, transparent 30%);
+  mix-blend-mode: screen;
+  transform-origin: 50% 0;
+  animation: pf-sway 14s ease-in-out infinite alternate;
+}
+@keyframes pf-sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+@keyframes pf-flame {
+  0%, 100% { transform: translateX(-50%) scale(1, 1); opacity: 0.9; }
+  50% { transform: translateX(-50%) scale(1.08, 1.22); opacity: 1; }
+}
+.pf-ripple { animation: pf-ripple 0.6s ease-out both; }
+@keyframes pf-ripple { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.7); opacity: 0; } }
+.pf-spin-ready { animation: pf-ready 2.2s ease-in-out infinite; }
+@keyframes pf-ready {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 214, 110, 0.35), inset 0 -8px 14px rgba(120, 70, 10, 0.55); }
+  50% { box-shadow: 0 0 34px rgba(255, 214, 110, 0.85), inset 0 -8px 14px rgba(120, 70, 10, 0.55); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pf-front, .pf-shake-1, .pf-shake-2, .pf-shake-3, .pf-shake-4, .pf-stage-shake-2, .pf-stage-shake-3, .pf-stage-shake-4, .pf-bulbs, .pf-glass::after, .pf-beams, .pf-spin-ready { animation: none; }
+}
+
+
+/* ---- Major-win quake: the whole machine (frame, reels, deck) shakes hard, in many directions, and keeps going ---- */
+.pf-calm { --qs: 0.55; }
+@property --qa { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --qr { syntax: "<number>"; inherits: true; initial-value: 0; }
+@keyframes pf-quake {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  8% { transform: translate3d(calc(var(--qa) * 1px), calc(var(--qa) * -0.55px), 0) rotate(calc(var(--qr) * 1deg)); }
+  17% { transform: translate3d(calc(var(--qa) * -0.85px), calc(var(--qa) * 0.7px), 0) rotate(calc(var(--qr) * -0.9deg)); }
+  25% { transform: translate3d(calc(var(--qa) * 0.5px), calc(var(--qa) * 0.9px), 0) rotate(calc(var(--qr) * 0.6deg)); }
+  33% { transform: translate3d(calc(var(--qa) * -1px), calc(var(--qa) * -0.4px), 0) rotate(calc(var(--qr) * -1deg)); }
+  42% { transform: translate3d(calc(var(--qa) * 0.8px), calc(var(--qa) * -0.8px), 0) rotate(calc(var(--qr) * 0.8deg)); }
+  50% { transform: translate3d(calc(var(--qa) * -0.4px), calc(var(--qa) * 0.6px), 0) rotate(calc(var(--qr) * -0.5deg)); }
+  58% { transform: translate3d(calc(var(--qa) * 0.95px), calc(var(--qa) * 0.35px), 0) rotate(calc(var(--qr) * 0.9deg)); }
+  67% { transform: translate3d(calc(var(--qa) * -0.7px), calc(var(--qa) * -0.9px), 0) rotate(calc(var(--qr) * -0.7deg)); }
+  75% { transform: translate3d(calc(var(--qa) * 0.35px), calc(var(--qa) * 0.8px), 0) rotate(calc(var(--qr) * 0.4deg)); }
+  83% { transform: translate3d(calc(var(--qa) * -0.9px), calc(var(--qa) * 0.3px), 0) rotate(calc(var(--qr) * -0.8deg)); }
+  92% { transform: translate3d(calc(var(--qa) * 0.6px), calc(var(--qa) * -0.5px), 0) rotate(calc(var(--qr) * 0.5deg)); }
+}
+@keyframes pf-quake-b {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  8% { transform: translate3d(calc(var(--qa) * -0.54px), calc(var(--qa) * -0.55px), 0) rotate(calc(var(--qr) * -0.50deg)); }
+  17% { transform: translate3d(calc(var(--qa) * 0.81px), calc(var(--qa) * 0.33px), 0) rotate(calc(var(--qr) * 0.80deg)); }
+  25% { transform: translate3d(calc(var(--qa) * -0.32px), calc(var(--qa) * 0.88px), 0) rotate(calc(var(--qr) * -0.40deg)); }
+  33% { transform: translate3d(calc(var(--qa) * 0.63px), calc(var(--qa) * -0.99px), 0) rotate(calc(var(--qr) * 0.70deg)); }
+  42% { transform: translate3d(calc(var(--qa) * -0.85px), calc(var(--qa) * 0.39px), 0) rotate(calc(var(--qr) * -0.90deg)); }
+  50% { transform: translate3d(calc(var(--qa) * 0.36px), calc(var(--qa) * 0.66px), 0) rotate(calc(var(--qr) * 0.50deg)); }
+  58% { transform: translate3d(calc(var(--qa) * -0.72px), calc(var(--qa) * -0.88px), 0) rotate(calc(var(--qr) * -0.80deg)); }
+  67% { transform: translate3d(calc(var(--qa) * 0.90px), calc(var(--qa) * -0.44px), 0) rotate(calc(var(--qr) * 1.00deg)); }
+  75% { transform: translate3d(calc(var(--qa) * -0.45px), calc(var(--qa) * 0.99px), 0) rotate(calc(var(--qr) * -0.60deg)); }
+  83% { transform: translate3d(calc(var(--qa) * 0.77px), calc(var(--qa) * 0.77px), 0) rotate(calc(var(--qr) * 0.90deg)); }
+  92% { transform: translate3d(calc(var(--qa) * -0.90px), calc(var(--qa) * -0.61px), 0) rotate(calc(var(--qr) * -1.00deg)); }
+}
+/* the opening slam: a violent hit that settles into the quake */
+@keyframes pf-slam {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  5% { transform: translate3d(calc(var(--qa) * -2.4px), calc(var(--qa) * 1.5px), 0) scale(1.03) rotate(calc(var(--qr) * -2.2deg)); }
+  11% { transform: translate3d(calc(var(--qa) * 2.1px), calc(var(--qa) * -1.7px), 0) scale(1.022) rotate(calc(var(--qr) * 2deg)); }
+  18% { transform: translate3d(calc(var(--qa) * -1.7px), calc(var(--qa) * -1px), 0) scale(1.014) rotate(calc(var(--qr) * -1.4deg)); }
+  27% { transform: translate3d(calc(var(--qa) * 1.4px), calc(var(--qa) * 1.2px), 0) scale(1.008) rotate(calc(var(--qr) * 1deg)); }
+  40% { transform: translate3d(calc(var(--qa) * -1px), calc(var(--qa) * 0.6px), 0) scale(1.003) rotate(calc(var(--qr) * -0.6deg)); }
+  60% { transform: translate3d(calc(var(--qa) * 0.7px), calc(var(--qa) * -0.5px), 0) scale(1) rotate(calc(var(--qr) * 0.4deg)); }
+  100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+}
+@keyframes pf-decay { to { --qa: 0; --qr: 0; } }
+.pf-q-1 { --qa: calc(7 * var(--qs, 1)); --qr: calc(0.3 * var(--qs, 1)); animation: pf-slam 0.8s ease-out, pf-quake 0.46s linear 0.8s infinite; }
+.pf-qc-1 { --qa: calc(3.9 * var(--qs, 1)); --qr: calc(0.18 * var(--qs, 1)); animation: pf-quake-b 0.25s linear infinite; }
+.pf-q-out-1 { --qa: calc(7 * var(--qs, 1)); --qr: calc(0.3 * var(--qs, 1)); animation: pf-quake 0.46s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-qc-out-1 { --qa: calc(3.9 * var(--qs, 1)); --qr: calc(0.18 * var(--qs, 1)); animation: pf-quake-b 0.25s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-q-2 { --qa: calc(12 * var(--qs, 1)); --qr: calc(0.5 * var(--qs, 1)); animation: pf-slam 0.9s ease-out, pf-quake 0.42s linear 0.9s infinite; }
+.pf-qc-2 { --qa: calc(6.6 * var(--qs, 1)); --qr: calc(0.30 * var(--qs, 1)); animation: pf-quake-b 0.23s linear infinite; }
+.pf-q-out-2 { --qa: calc(12 * var(--qs, 1)); --qr: calc(0.5 * var(--qs, 1)); animation: pf-quake 0.42s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-qc-out-2 { --qa: calc(6.6 * var(--qs, 1)); --qr: calc(0.30 * var(--qs, 1)); animation: pf-quake-b 0.23s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-q-3 { --qa: calc(17 * var(--qs, 1)); --qr: calc(0.7 * var(--qs, 1)); animation: pf-slam 1s ease-out, pf-quake 0.4s linear 1s infinite; }
+.pf-qc-3 { --qa: calc(9.4 * var(--qs, 1)); --qr: calc(0.42 * var(--qs, 1)); animation: pf-quake-b 0.22s linear infinite; }
+.pf-q-out-3 { --qa: calc(17 * var(--qs, 1)); --qr: calc(0.7 * var(--qs, 1)); animation: pf-quake 0.4s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-qc-out-3 { --qa: calc(9.4 * var(--qs, 1)); --qr: calc(0.42 * var(--qs, 1)); animation: pf-quake-b 0.22s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-q-4 { --qa: calc(24 * var(--qs, 1)); --qr: calc(1 * var(--qs, 1)); animation: pf-slam 1.1s ease-out, pf-quake 0.36s linear 1.1s infinite; }
+.pf-qc-4 { --qa: calc(13.2 * var(--qs, 1)); --qr: calc(0.60 * var(--qs, 1)); animation: pf-quake-b 0.20s linear infinite; }
+.pf-q-out-4 { --qa: calc(24 * var(--qs, 1)); --qr: calc(1 * var(--qs, 1)); animation: pf-quake 0.36s linear infinite, pf-decay 0.9s ease-out forwards; }
+.pf-qc-out-4 { --qa: calc(13.2 * var(--qs, 1)); --qr: calc(0.60 * var(--qs, 1)); animation: pf-quake-b 0.20s linear infinite, pf-decay 0.9s ease-out forwards; }
+/* the title breathes with light while it is on screen */
+.pf-title-pulse { animation: pf-title-pulse 0.9s ease-in-out infinite; }
+@keyframes pf-title-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 22px rgba(var(--g), 0.85)) drop-shadow(0 6px 0 rgba(60, 30, 0, 0.7)); }
+  50% { transform: scale(1.035); filter: drop-shadow(0 0 46px rgba(var(--g), 1)) drop-shadow(0 0 90px rgba(var(--g), 0.6)) drop-shadow(0 6px 0 rgba(60, 30, 0, 0.7)); }
+}
+

@@ -1,0 +1,23 @@
+{
+  "gameId": "tiger-clash",
+  "name": "TIGER CLASH",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "Mythical card duel: back Tiger, Dragon or Tie as one card each is revealed. Free demo credits only.",
+  "assets": {
+    "thumbnail": "assets/thumbnail.webp",
+    "images": "assets/art/"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "orientation": "both"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}

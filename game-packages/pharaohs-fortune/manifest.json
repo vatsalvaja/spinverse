@@ -1,0 +1,24 @@
+{
+  "gameId": "pharaohs-fortune",
+  "name": "Pharaoh's Fortune",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "Classic 5×3 slot in a sun-struck Egyptian tomb. Expanding wilds and a hidden chamber bonus reward the curious. Free demo credits only.",
+  "assets": {
+    "thumbnail": "assets/thumbnail.webp",
+    "images": "assets/art/",
+    "audio": "assets/audio/"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "orientation": "both"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}

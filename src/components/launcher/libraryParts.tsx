@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { Heart, Play, Star, Users } from "lucide-react";
 import type { Game } from "@/data/games";
 import { cn } from "@/lib/utils";
+import { InstallStatusChip, RowInstallAction, type InstallProps } from "@/features/game-management/player/components/InstallActions";
 import { coverFor } from "./GameTile";
 
 /** Category tabs built from whatever categories the library actually has, so new games need no changes here. */
@@ -42,7 +43,7 @@ export function ContinueCard({ game, onPlay }: { game: Game; onPlay: () => void 
 }
 
 /** One game as a dense list row: cover, name, facts, favorite and play. */
-export function GameRow({ game, selected, favorite, onSelect, onPlay, onFavorite }: { game: Game; selected: boolean; favorite: boolean; onSelect: () => void; onPlay: () => void; onFavorite: () => void }) {
+export function GameRow({ game, selected, favorite, onSelect, onPlay, onFavorite, install }: { game: Game; selected: boolean; favorite: boolean; onSelect: () => void; onPlay: () => void; onFavorite: () => void; install?: InstallProps }) {
   return (
     <div className="lx-row [grid-template-columns:auto_1fr_auto] md:[grid-template-columns:auto_minmax(0,1.6fr)_repeat(3,minmax(0,.7fr))_auto]" data-selected={selected} style={{ "--ac": game.accent } as CSSProperties} onClick={onSelect} onDoubleClick={onPlay}>
       <span className="lx-thumb h-[54px] w-[44px]">
@@ -52,6 +53,7 @@ export function GameRow({ game, selected, favorite, onSelect, onPlay, onFavorite
       <span className="min-w-0">
         <span className="block truncate text-[14px] font-semibold text-white">{game.name}</span>
         <span className="block truncate text-xs text-white/45">{game.category} · {game.grid}</span>
+        {install && install.status !== "installed" && <InstallStatusChip install={install} className="mt-1" />}
       </span>
       <span className="hidden items-center gap-1.5 text-[13px] text-white/70 md:flex"><Star className="h-3.5 w-3.5 fill-[#e6c170] text-[#e6c170]" /><b className="font-num font-semibold">{game.rating}</b></span>
       <span className="hidden text-[13px] text-white/70 md:block">{game.volatility} volatility</span>
@@ -60,9 +62,13 @@ export function GameRow({ game, selected, favorite, onSelect, onPlay, onFavorite
         <button type="button" onClick={(e) => { e.stopPropagation(); onFavorite(); }} aria-pressed={favorite} aria-label={favorite ? `Remove ${game.name} from favorites` : `Add ${game.name} to favorites`} className={cn("lx-heart h-8 w-8", "!bg-transparent")} data-on={favorite}>
           <Heart className={cn("h-4 w-4", favorite && "fill-current")} />
         </button>
-        <button type="button" onClick={(e) => { e.stopPropagation(); onPlay(); }} aria-label={`Play ${game.name}`} className="lx-mini">
-          <Play className="h-3 w-3 fill-current" /> Play
-        </button>
+        {install && (install.status === "not_installed" || install.status === "downloading" || install.status === "maintenance") ? (
+          <RowInstallAction install={install} />
+        ) : (
+          <button type="button" onClick={(e) => { e.stopPropagation(); onPlay(); }} aria-label={`Play ${game.name}`} className="lx-mini">
+            <Play className="h-3 w-3 fill-current" /> Play
+          </button>
+        )}
       </span>
     </div>
   );

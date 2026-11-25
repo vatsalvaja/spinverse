@@ -1,0 +1,23 @@
+{
+  "gameId": "atlantis-cascade",
+  "name": "Atlantis Cascade",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "Cascading 6×5 symbols in a sunken city: wins vanish, new symbols tumble in and the multiplier rises. Free demo credits only.",
+  "assets": {
+    "thumbnail": "assets/thumbnail.webp",
+    "images": "assets/art/"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "orientation": "both"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}

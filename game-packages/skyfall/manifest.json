@@ -1,0 +1,22 @@
+{
+  "gameId": "skyfall",
+  "name": "SKYFALL",
+  "version": "1.0.0",
+  "entryPoint": "index.html",
+  "description": "Crash game: ride the rising multiplier and cash out before the sky falls. Two bet panels, simulated players, free demo credits only.",
+  "assets": {
+    "thumbnail": "assets/thumbnail.webp"
+  },
+  "compatibility": {
+    "minBrowser": "Chrome 110",
+    "platforms": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "orientation": "both"
+  },
+  "build": {
+    "outDir": "dist"
+  }
+}
