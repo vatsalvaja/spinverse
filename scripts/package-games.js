@@ -240,9 +240,15 @@ function processGame(game, opts) {
       const where = path.relative(ROOT, root) || ".";
       if (!opts.install) throw new StepError("install", `Dependencies are not installed and --no-install was given: ${missing.join(", ")}.`, [`Run \`npm install\` in ${where}, or drop --no-install.`]);
       const shared = root !== game.dir;
-      const useCi = !shared && fs.existsSync(path.join(root, "package-lock.json"));
+      // On CI (Vercel sets VERCEL and CI) install exactly what the lockfile says; locally `npm install` is
+      // non-destructive and keeps an existing node_modules.
+      const onCi = Boolean(process.env.CI || process.env.VERCEL);
+      const useCi = fs.existsSync(path.join(root, "package-lock.json")) && (!shared || onCi);
       say(`install    npm ${useCi ? "ci" : "install"} in ${where}${shared ? " (shared by all games)" : ""} ...`);
-      const r = npm([useCi ? "ci" : "install", "--no-audit", "--no-fund"], root, opts.verbose);
+      // `--include=dev` is required: a build is a development-time activity (vite, typescript, tailwind are
+      // devDependencies), but hosts such as Vercel run builds with NODE_ENV=production, which makes npm omit
+      // devDependencies by default (as do NPM_CONFIG_PRODUCTION / NPM_CONFIG_OMIT). The flag overrides all of them.
+      const r = npm([useCi ? "ci" : "install", "--include=dev", "--no-audit", "--no-fund"], root, opts.verbose);
       if (!r.ok) throw new StepError("install", `npm ${useCi ? "ci" : "install"} failed.`, r.error ? [r.error.message] : tail(r.log));
       const still = missingDependencies(game, root);
       if (still.length) throw new StepError("install", `Still not installed after npm install: ${still.join(", ")}.`);
