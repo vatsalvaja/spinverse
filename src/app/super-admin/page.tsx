@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { svDiag } from "@/lib/diag"; // [sv-diag]
 import { Coins, HandCoins, RotateCcw, UserCog, UsersRound, Wallet } from "lucide-react";
 import { AButton, ALinkButton, Card, CardHeader, EmptyState, PageHeader, StatCard } from "@/components/admin/ui";
 import { ConfirmModal } from "@/components/admin/UserDialogs";
@@ -25,6 +26,8 @@ export default function SuperAdminDashboard() {
   const heldByClients = rows.reduce((s, r) => s + r.heldByClients, 0);
   const recent = useMemo(() => [...data.txs].sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 5), [data.txs]);
   const top = Math.max(1, ...rows.map((r) => r.received));
+
+  useEffect(() => svDiag("page:super-admin:mounted", { masters: rows.length, clients: clients.length }), []); // eslint-disable-line react-hooks/exhaustive-deps -- [sv-diag]
 
   return (
     <div>

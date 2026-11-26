@@ -8,6 +8,7 @@ import { ChevronRight, Coins, ExternalLink, LogOut, Menu as MenuIcon, X, type Lu
 import { LogoMark } from "@/components/brand/Logo";
 import { Avatar } from "@/components/ui/avatar";
 import { Menu } from "@/components/ui/menu";
+import { svDiag } from "@/lib/diag"; // [sv-diag]
 import { cn, formatPoints } from "@/lib/utils";
 import { useAccess } from "../AccessProvider";
 import { ROLE_HOME, ROLE_LABEL, type Role } from "../types";
@@ -83,6 +84,12 @@ export function PortalShell({ cfg, children }: { cfg: PortalConfig; children: Re
   }, [ready, current, cfg.role, router]);
 
   useEffect(() => setDrawer(false), [pathname]);
+
+  // [sv-diag] which branch the guard takes: still checking, redirecting, or rendering the page
+  const diagDecision = !ready ? "checking:not-ready" : !current ? "redirect:no-session" : current.role !== cfg.role ? "redirect:wrong-role" : "render";
+  useEffect(() => {
+    svDiag("shell", { expects: cfg.role, ready, role: current?.role ?? null, decision: diagDecision, path: pathname });
+  }, [cfg.role, ready, current, diagDecision, pathname]);
 
   if (!ready || !current || current.role !== cfg.role) {
     return <div className="ad-root flex min-h-screen items-center justify-center text-sm text-slate-500">Checking session…</div>;

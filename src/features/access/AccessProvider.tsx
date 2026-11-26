@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { svDiag } from "@/lib/diag"; // [sv-diag]
 import { seedData } from "./seed";
 import { DATA_KEY, loadAccessData, saveAccessData } from "./storage";
 import { MAX_ALLOCATION, type AccessData, type AccessStatus, type Account, type CoinTx, type Result, type Role } from "./types";
@@ -108,11 +109,13 @@ export function AccessProvider({ children }: { children: ReactNode }) {
       dataRef.current = d;
       setDataState(d);
     };
-    apply(loadAccessData(true));
+    const loaded = loadAccessData(true);
+    apply(loaded);
     const a = readAuth();
     authRef.current = a;
     setAuthId(a);
     setReady(true);
+    svDiag("access:init", { accounts: loaded.accounts.length, txs: loaded.txs.length, savedSignIn: a }); // [sv-diag]
     const onStorage = (e: StorageEvent) => {
       if (e.key === DATA_KEY || e.key === null) apply(loadAccessData(false));
     };
@@ -134,6 +137,10 @@ export function AccessProvider({ children }: { children: ReactNode }) {
     const a = authId ? data.accounts.find((x) => x.id === authId) : undefined;
     return a && a.status === "active" ? a : null;
   }, [data, authId]);
+
+  useEffect(() => {
+    svDiag("access:state", { ready, authId, currentRole: current?.role ?? null, accounts: data.accounts.length }); // [sv-diag]
+  }, [ready, authId, current, data.accounts.length]);
 
   // A saved sign-in that points at a missing or deactivated account is dropped.
   useEffect(() => {

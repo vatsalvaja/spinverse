@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/toast";
 import { useAccess } from "@/features/access/AccessProvider";
 import { DEMO_LOGINS } from "@/features/access/seed";
 import { ROLE_HOME } from "@/features/access/types";
+import { svDiag } from "@/lib/diag"; // [sv-diag]
 import { useReduceMotion } from "@/lib/useReduceMotion";
 import { PasswordSlot, Slot, VaultButton, VaultCheck, VaultFooter, VaultHeading, VaultPanel, VaultStage, dialTurn, type VaultState } from "./vault";
 
@@ -48,14 +49,21 @@ export function VaultLogin() {
         const result = login(identity, password, remember);
         if (!result.ok || !result.account) {
           setState("idle");
+          svDiag("login:rejected", { reason: result.ok ? "no account returned" : result.error }); // [sv-diag]
           setErrors({ password: result.ok ? "Sign in failed." : result.error });
           setShake((n) => n + 1);
           return;
         }
         const account = result.account;
         setState("open");
+        svDiag("login:ok", { role: account.role, target: ROLE_HOME[account.role] }); // [sv-diag]
         toast(`Welcome, ${account.name}.`);
-        timers.current.push(setTimeout(() => router.push(ROLE_HOME[account.role]), calm ? 200 : 950));
+        timers.current.push(
+          setTimeout(() => {
+            svDiag("login:navigate", { target: ROLE_HOME[account.role] }); // [sv-diag]
+            router.push(ROLE_HOME[account.role]);
+          }, calm ? 200 : 950),
+        );
       }, 1000),
     );
   };

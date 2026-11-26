@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { svDiag } from "@/lib/diag"; // [sv-diag]
 import { Coins, HandCoins, Plus, UsersRound, Wallet } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { AButton, ALinkButton, Card, CardHeader, EmptyState, PageHeader, StatCard } from "@/components/admin/ui";
@@ -20,6 +21,7 @@ export default function MasterDashboard() {
   const stats = useMemo(() => (me ? masterStats(data, me) : null), [data, me]);
   const clients = useMemo(() => (me ? clientsOf(data, me.id) : []), [data, me]);
   const recent = useMemo(() => (me ? txsOfMaster(data, me.id).slice(0, 5) : []), [data, me]);
+  useEffect(() => svDiag(me && stats ? "page:master:mounted" : "page:master:returned-null", { hasMaster: !!me, clients: clients.length }), [me, stats]); // eslint-disable-line react-hooks/exhaustive-deps -- [sv-diag]
   if (!me || !stats) return null;
 
   const max = Math.max(1, ...clients.map((c) => c.balance));
