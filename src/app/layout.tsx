@@ -19,6 +19,13 @@ const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variabl
 export const metadata: Metadata = {
   title: { default: "SPINVERSE — Every Spin Tells a Different Story", template: "%s · SPINVERSE" },
   description: "A luxury entertainment lounge of story-driven slot worlds, played with virtual points only.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+  },
 };
 
 export const viewport: Viewport = { themeColor: "#06060b", width: "device-width", initialScale: 1 };
