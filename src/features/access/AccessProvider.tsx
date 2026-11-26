@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { seedData } from "./seed";
+import { DATA_KEY, loadAccessData, saveAccessData } from "./storage";
 import { MAX_ALLOCATION, type AccessData, type AccessStatus, type Account, type CoinTx, type Result, type Role } from "./types";
 
 /**
@@ -14,7 +15,6 @@ import { MAX_ALLOCATION, type AccessData, type AccessStatus, type Account, type 
  *   but the store refuses it regardless.
  */
 
-const DATA_KEY = "sv-access-data-v1";
 const AUTH_KEY = "sv-access-auth-v1";
 
 interface AccountInput {
@@ -51,23 +51,6 @@ const AccessContext = createContext<AccessValue | null>(null);
 
 const fail = (error: string): Result => ({ ok: false, error });
 const OK: Result = { ok: true };
-
-function isValidData(v: unknown): v is AccessData {
-  if (!v || typeof v !== "object") return false;
-  const d = v as AccessData;
-  return Array.isArray(d.accounts) && Array.isArray(d.txs) && d.accounts.every((a) => a && typeof a.id === "string" && typeof a.balance === "number" && typeof a.username === "string");
-}
-
-function readData(): AccessData {
-  try {
-    const raw = localStorage.getItem(DATA_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (isValidData(parsed)) return parsed;
-    }
-  } catch {}
-  return seedData();
-}
 
 /** Each tab keeps its own sign-in (sessionStorage), so two roles can be open side by side. "Keep me signed in" also saves it for new tabs. */
 function readAuth(): string | null {
@@ -117,20 +100,21 @@ export function AccessProvider({ children }: { children: ReactNode }) {
   const dataRef = useRef(data);
   const authRef = useRef<string | null>(null);
 
-  // Read saved data once on the client; data (not the sign-in) is re-read when another tab changes it.
+  // Read the saved data once on the client. It is repaired if incomplete and written back if it was missing, so the
+  // demo accounts are in the browser's storage from the first visit (not only after the first change). Data (not the
+  // sign-in) is re-read when another tab changes it, without writing, so tabs never overwrite each other.
   useEffect(() => {
-    const loadData = () => {
-      const d = readData();
+    const apply = (d: AccessData) => {
       dataRef.current = d;
       setDataState(d);
     };
-    loadData();
+    apply(loadAccessData(true));
     const a = readAuth();
     authRef.current = a;
     setAuthId(a);
     setReady(true);
     const onStorage = (e: StorageEvent) => {
-      if (e.key === DATA_KEY || e.key === null) loadData();
+      if (e.key === DATA_KEY || e.key === null) apply(loadAccessData(false));
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
@@ -139,9 +123,7 @@ export function AccessProvider({ children }: { children: ReactNode }) {
   const commit = useCallback((next: AccessData) => {
     dataRef.current = next;
     setDataState(next);
-    try {
-      localStorage.setItem(DATA_KEY, JSON.stringify(next));
-    } catch {}
+    saveAccessData(next);
   }, []);
 
   const currentOf = (d: AccessData): Account | null => {
