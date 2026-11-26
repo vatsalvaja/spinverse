@@ -7,6 +7,8 @@ import { LauncherShell } from "@/components/launcher/LauncherShell";
 import { PlayProvider } from "@/components/site/PlayModal";
 import { UniverseMenu } from "@/components/site/UniverseMenu";
 import type { GameId } from "@/data/types";
+import { useAccess } from "@/features/access/AccessProvider";
+import { ROLE_HOME } from "@/features/access/types";
 import { useSession } from "@/lib/session";
 
 const UNIVERSE: { href: string; label: string; note: string; world: GameId; icon: typeof Home }[] = [
@@ -32,6 +34,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { player, mode, signOut } = useSession();
+  const { ready, current } = useAccess();
   const [open, setOpen] = useState(false);
 
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
@@ -45,11 +48,22 @@ export function SiteShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("sv-open-universe-menu", handleOpenUniverse);
   }, []);
 
+  // The player site is for signed-in clients only; every other visitor is sent to their own area or to the login page.
+  useEffect(() => {
+    if (!ready) return;
+    if (!current) router.replace("/login");
+    else if (current.role !== "client") router.replace(ROLE_HOME[current.role]);
+  }, [ready, current, router]);
+
   const logout = () => {
     signOut();
     setOpen(false);
     router.push("/login");
   };
+
+  if (!ready || current?.role !== "client") {
+    return <div className="sv-stage flex min-h-screen items-center justify-center text-sm text-white/55">Checking session…</div>;
+  }
 
   return (
     <>

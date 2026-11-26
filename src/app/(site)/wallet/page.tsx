@@ -10,6 +10,8 @@ import { useToast } from "@/components/ui/toast";
 import { GAME_BY_ID } from "@/data/games";
 import { useDemoData } from "@/data/provider";
 import { TX_TYPE_LABEL, type Transaction, type TxType } from "@/data/types";
+import { useAccess } from "@/features/access/AccessProvider";
+import { clientLedger } from "@/features/access/selectors";
 import { useSession } from "@/lib/session";
 import { NOW, cn, formatPoints } from "@/lib/utils";
 
@@ -67,7 +69,12 @@ export default function WalletPage() {
   const [filter, setFilter] = useState<"all" | TxType>("all");
   const [visible, setVisible] = useState(12);
 
-  const all = useMemo(() => (player ? transactionsFor(player.id) : []), [player, transactionsFor]);
+  const { data: access } = useAccess();
+  // coin allocations from the client's master are listed next to the demo history
+  const all = useMemo(
+    () => (player ? [...clientLedger(access, player.id), ...transactionsFor(player.id)].sort((a, b) => b.timestamp.localeCompare(a.timestamp)) : []),
+    [player, transactionsFor, access],
+  );
   const stats = useMemo(() => {
     const done = all.filter((t) => t.status === "completed");
     const week = done.filter((t) => NOW.getTime() - new Date(t.timestamp).getTime() < 7 * DAY);

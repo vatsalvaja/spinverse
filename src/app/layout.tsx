@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cinzel_Decorative, IBM_Plex_Mono, IBM_Plex_Sans, Instrument_Serif, Marcellus, Outfit, Oxanium, Unbounded } from "next/font/google";
 import "./globals.css";
 import { DemoDataProvider } from "@/data/provider";
+import { AccessProvider } from "@/features/access/AccessProvider";
 import { SessionProvider } from "@/lib/session";
 import { ToastProvider } from "@/components/ui/toast";
 
@@ -27,9 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${serif.variable} ${body.variable} ${num.variable} ${pharaoh.variable} ${atlantis.variable} ${admin.variable} ${mono.variable}`}>
       <body>
         <DemoDataProvider>
-          <SessionProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </SessionProvider>
+          <AccessProvider>
+            <SessionProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </SessionProvider>
+          </AccessProvider>
         </DemoDataProvider>
       </body>
     </html>

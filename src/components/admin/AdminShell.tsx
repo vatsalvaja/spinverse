@@ -86,8 +86,8 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </nav>
       <div className="space-y-2 border-t border-white/[0.06] p-4">
-        <Link href="/dashboard" className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px] text-slate-400 hover:bg-white/[0.04] hover:text-white">
-          View player site <ExternalLink className="h-3.5 w-3.5" />
+        <Link href="/super-admin" className="flex items-center justify-between rounded-lg px-3 py-2 text-[13px] text-slate-400 hover:bg-white/[0.04] hover:text-white">
+          Back to Super Admin <ExternalLink className="h-3.5 w-3.5" />
         </Link>
         <p className="px-3 text-[11px] text-slate-500">Demo environment · v0.1 · mock data</p>
       </div>
@@ -106,7 +106,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [q, setQ] = useState("");
 
   useEffect(() => {
-    if (adminReady && !adminSignedIn) router.replace("/admin/login");
+    if (adminReady && !adminSignedIn) router.replace("/login");
   }, [adminReady, adminSignedIn, router]);
 
   if (!adminReady || !adminSignedIn) {
@@ -118,7 +118,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setAdminSignedIn(false);
-    router.push("/admin/login");
+    router.push("/login");
   };
 
   return (

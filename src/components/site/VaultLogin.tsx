@@ -3,15 +3,18 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Lock, Mail, UserRound } from "lucide-react";
+import { Lock, UserRound } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
-import { useSession } from "@/lib/session";
+import { useAccess } from "@/features/access/AccessProvider";
+import { DEMO_LOGINS } from "@/features/access/seed";
+import { ROLE_HOME } from "@/features/access/types";
 import { useReduceMotion } from "@/lib/useReduceMotion";
 import { PasswordSlot, Slot, VaultButton, VaultCheck, VaultFooter, VaultHeading, VaultPanel, VaultStage, dialTurn, type VaultState } from "./vault";
 
+/** One login for every role. The account decides where it lands: Super Admin, Master or the player site. */
 export function VaultLogin() {
   const router = useRouter();
-  const { signIn, continueAsGuest } = useSession();
+  const { login, ready, current } = useAccess();
   const toast = useToast();
   const calm = useReduceMotion();
   const [identity, setIdentity] = useState("");
@@ -23,17 +26,17 @@ export function VaultLogin() {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
-  const check = (id: string, pw: string) => {
-    const next: typeof errors = {};
-    if (!id.trim()) next.identity = "Enter your email or username.";
-    if (pw.length < 6) next.password = "Password must be at least 6 characters.";
-    return next;
-  };
+  // already signed in: go straight to your own area
+  useEffect(() => {
+    if (ready && current && state === "idle") router.replace(ROLE_HOME[current.role]);
+  }, [ready, current, state, router]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (state !== "idle") return;
-    const next = check(identity, password);
+    const next: typeof errors = {};
+    if (!identity.trim()) next.identity = "Enter your username.";
+    if (!password) next.password = "Enter your password.";
     setErrors(next);
     if (Object.keys(next).length) {
       setShake((n) => n + 1);
@@ -42,18 +45,26 @@ export function VaultLogin() {
     setState("busy");
     timers.current.push(
       setTimeout(() => {
-        signIn();
+        const result = login(identity, password, remember);
+        if (!result.ok || !result.account) {
+          setState("idle");
+          setErrors({ password: result.ok ? "Sign in failed." : result.error });
+          setShake((n) => n + 1);
+          return;
+        }
+        const account = result.account;
         setState("open");
-        toast("Welcome back to SPINVERSE.");
-        timers.current.push(setTimeout(() => router.push("/dashboard"), calm ? 200 : 950));
+        toast(`Welcome, ${account.name}.`);
+        timers.current.push(setTimeout(() => router.push(ROLE_HOME[account.role]), calm ? 200 : 950));
       }, 1000),
     );
   };
 
-  const guest = () => {
-    continueAsGuest();
-    toast("You’re in as a guest. Create an account any time to keep your points.", "info");
-    router.push("/dashboard");
+  const fill = (username: string, pw: string) => {
+    if (state !== "idle") return;
+    setIdentity(username);
+    setPassword(pw);
+    setErrors({});
   };
 
   const busy = state !== "idle";
@@ -66,19 +77,18 @@ export function VaultLogin() {
 
         <form onSubmit={submit} noValidate className="mt-6 space-y-4">
           <Slot
-            label="Email or username"
-            icon={<Mail />}
+            label="Username"
+            icon={<UserRound />}
             value={identity}
             onChange={(e) => {
               setIdentity(e.target.value);
               if (errors.identity) setErrors((p) => ({ ...p, identity: undefined }));
             }}
-            onBlur={() => identity && setErrors((p) => ({ ...p, identity: check(identity, "xxxxxx").identity }))}
             error={errors.identity}
             autoComplete="username"
             autoCapitalize="none"
             spellCheck={false}
-            placeholder="demo@gmail.com"
+            placeholder="Your username"
             disabled={busy}
           />
           <PasswordSlot
@@ -105,19 +115,24 @@ export function VaultLogin() {
         </form>
 
         <VaultFooter>
-          <span>
-            New here? <Link href="/register" className="vl-link">Create an account</Link>
-          </span>
-          <button type="button" onClick={guest} disabled={busy} className="vl-link flex items-center gap-1.5 disabled:opacity-50">
-            <UserRound className="h-3.5 w-3.5" /> Guest
-          </button>
+          <span>Accounts are created by your master. Contact them to get access.</span>
         </VaultFooter>
-        <p className="mt-3 text-center text-[11.5px] text-[#7d7b92]">Demo mode: any email and a password of 6+ characters opens the vault.</p>
-      </VaultPanel>
 
-      <p className="mt-5 text-center text-xs text-[#6d6b82]">
-        <Link href="/admin/login" className="underline-offset-2 hover:text-white hover:underline">Staff sign in</Link>
-      </p>
+        <details className="mt-3 rounded-xl border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 text-[12.5px] text-[#b9b6c8]">
+          <summary className="cursor-pointer select-none font-medium text-[#c9c6d6]">Demo accounts</summary>
+          <p className="mt-2 text-[11.5px] text-[#7d7b92]">Frontend demo only. Tap one to fill the form.</p>
+          <ul className="mt-2 divide-y divide-white/[0.06]">
+            {DEMO_LOGINS.map((d) => (
+              <li key={d.username}>
+                <button type="button" onClick={() => fill(d.username, d.password)} disabled={busy} className="flex w-full items-center justify-between gap-3 py-1.5 text-left hover:text-white disabled:opacity-50">
+                  <span>{d.label}</span>
+                  <span className="font-mono text-[11.5px] text-[#e6c170]">{d.username} / {d.password}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      </VaultPanel>
     </VaultStage>
   );
 }
