@@ -51,6 +51,14 @@ function report() {
     const r = (el as HTMLElement).getBoundingClientRect();
     return { display: s.display, visibility: s.visibility, opacity: s.opacity, color: s.color, background: s.backgroundColor, width: Math.round(r.width), height: Math.round(r.height) };
   };
+  // the .ad-root element and every ancestor: inline style, [hidden] and computed display (finds what hides the portal)
+  const chain = (el: Element | null) => {
+    const out: Record<string, unknown>[] = [];
+    for (let n = el as HTMLElement | null; n && out.length < 10; n = n.parentElement) {
+      out.push({ tag: n.tagName.toLowerCase(), id: n.id || undefined, cls: String(n.getAttribute("class") || "").slice(0, 80), inlineStyle: n.getAttribute("style"), hiddenAttr: n.hasAttribute("hidden"), display: getComputedStyle(n).display });
+    }
+    return out;
+  };
   let accounts: number | null = null;
   let storedAuth: string | null = null;
   try {
@@ -79,6 +87,11 @@ function report() {
         showsCheckingSession: text.includes("Checking session"),
         showsLoginForm: !!q('input[type="password"]'),
         adRootStyle: style(root),
+        adRootChain: chain(root),
+        allAdRoots: [...document.querySelectorAll(".ad-root")].map((e) => ({ inlineStyle: e.getAttribute("style"), hiddenAttr: e.hasAttribute("hidden"), display: getComputedStyle(e).display, parent: e.parentElement?.tagName.toLowerCase() })),
+        htmlInlineStyle: document.documentElement.getAttribute("style"),
+        htmlClass: document.documentElement.getAttribute("class"),
+        bodyInlineStyle: document.body.getAttribute("style"),
         mainStyle: style(main),
         bodyStyle: style(document.body),
       },
@@ -130,6 +143,41 @@ function init() {
     } as History["pushState"];
   }
   window.addEventListener("pagehide", () => svDiag("pagehide", { path: location.pathname }));
+
+  // who hides the portal: log any style/hidden/class change on <html>, <body>, .ad-root or an ancestor of .ad-root
+  const watched = (el: Element) => {
+    if (el === document.documentElement || el === document.body) return true;
+    const r = document.querySelector(".ad-root");
+    return !!r && (el === r || el.contains(r));
+  };
+  try {
+    new MutationObserver((list) => {
+      for (const m of list) {
+        const el = m.target as HTMLElement;
+        if (!watched(el)) continue;
+        svDiag("attr-change", { el: el.tagName.toLowerCase() + (el.className ? "." + String(el.className).split(" ")[0] : ""), attr: m.attributeName, from: m.oldValue, to: el.getAttribute(m.attributeName || ""), display: getComputedStyle(el).display });
+      }
+    }).observe(document.documentElement, { subtree: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "class"] });
+  } catch {}
+  // React hides a suspended boundary with style.setProperty("display","none","important"): record who called it
+  try {
+    const orig = CSSStyleDeclaration.prototype.setProperty;
+    CSSStyleDeclaration.prototype.setProperty = function (this: CSSStyleDeclaration, prop: string, value: string | null, priority?: string) {
+      if (prop === "display" && value === "none") {
+        let hit = false;
+        for (let n = document.querySelector(".ad-root") as HTMLElement | null; n; n = n.parentElement) if (n.style === this) hit = true;
+        if (hit) svDiag("set-display-none", { priority: priority || "", stack: (new Error().stack || "").split("\n").slice(1, 8).map((l) => l.trim().replace(location.origin, "")) });
+      }
+      return orig.call(this, prop, value as string, priority);
+    };
+  } catch {}
+  // plain visibility check shortly after every page load
+  for (const ms of [1000, 3000, 6000]) {
+    setTimeout(() => {
+      const r = document.querySelector(".ad-root") as HTMLElement | null;
+      if (r) svDiag("ad-root-check", { afterMs: ms, display: getComputedStyle(r).display, inlineStyle: r.getAttribute("style"), hiddenAttr: r.hasAttribute("hidden"), width: Math.round(r.getBoundingClientRect().width) });
+    }, ms);
+  }
 
   (window as unknown as { __svDiagReport: () => string }).__svDiagReport = report;
 }
