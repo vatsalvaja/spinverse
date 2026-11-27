@@ -1,8 +1,5 @@
-import type { Metadata } from "next";
-import { VersionManagementPage } from "@/features/game-management/admin/pages/VersionManagementPage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Version Management" };
-
-export default function Page() {
-  return <VersionManagementPage />;
+export default function AdminGameManagementVersionDetailRedirect({ params }: { params: { gameId: string } }) {
+  redirect(`/super-admin/game-management/versions/${params.gameId}`);
 }

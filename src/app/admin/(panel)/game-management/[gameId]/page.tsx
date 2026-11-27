@@ -1,8 +1,5 @@
-import type { Metadata } from "next";
-import { DeployPage } from "@/features/game-management/admin/pages/DeployPage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Game Deployment" };
-
-export default function Page() {
-  return <DeployPage />;
+export default function AdminGameManagementDeployRedirect({ params }: { params: { gameId: string } }) {
+  redirect(`/super-admin/game-management/${params.gameId}`);
 }

@@ -7,7 +7,7 @@ import { GitBranch, LayoutGrid, PackagePlus, SlidersHorizontal } from "lucide-re
 import { cn } from "@/lib/utils";
 import { GM_BG } from "../../ui/primitives";
 
-export const GM_BASE = "/admin/game-management";
+export const GM_BASE = "/super-admin/game-management";
 
 const TABS = [
   { href: GM_BASE, label: "Games overview", icon: LayoutGrid, exact: true },

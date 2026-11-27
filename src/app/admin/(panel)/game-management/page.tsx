@@ -1,8 +1,5 @@
-import type { Metadata } from "next";
-import { OverviewPage } from "@/features/game-management/admin/pages/OverviewPage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Game Management" };
-
-export default function Page() {
-  return <OverviewPage />;
+export default function AdminGameManagementRedirect() {
+  redirect("/super-admin/game-management");
 }

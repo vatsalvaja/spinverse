@@ -6,6 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, Coins, ExternalLink, LogOut, Menu as MenuIcon, X, type LucideIcon } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
+import { SearchInput } from "@/components/admin/ui";
 import { Avatar } from "@/components/ui/avatar";
 import { Menu } from "@/components/ui/menu";
 import { svDiag } from "@/lib/diag"; // [sv-diag]
@@ -13,24 +14,48 @@ import { cn, formatPoints } from "@/lib/utils";
 import { useAccess } from "../AccessProvider";
 import { ROLE_HOME, ROLE_LABEL, type Role } from "../types";
 
+export interface PortalNavChildItem {
+  href: string;
+  label: string;
+  exact?: boolean;
+}
+
 export interface PortalNavItem {
   href: string;
   label: string;
   icon: LucideIcon;
   exact?: boolean;
+  /** Additional route prefixes that highlight this nav item as active. */
+  matchPrefixes?: string[];
+  children?: PortalNavChildItem[];
+}
+
+export interface PortalNavGroup {
+  label?: string;
+  items: PortalNavItem[];
 }
 
 interface PortalConfig {
   role: Role;
   title: string;
-  nav: PortalNavItem[];
-  /** Optional link to another area this role may open (e.g. the super admin's operations console). */
+  nav?: PortalNavItem[];
+  groups?: PortalNavGroup[];
+  /** Optional link to another area this role may open. */
   extra?: { href: string; label: string };
+  /** Optional header search target path (appends `?q=`). */
+  searchHref?: string;
   crumbs: Record<string, string>;
+}
+
+function isRouteActive(pathname: string, href: string, exact?: boolean, matchPrefixes?: string[]) {
+  if (exact) return pathname === href;
+  if (pathname === href || pathname.startsWith(href + "/")) return true;
+  return !!matchPrefixes?.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
 function Sidebar({ cfg, onNavigate }: { cfg: PortalConfig; onNavigate?: () => void }) {
   const pathname = usePathname();
+  const groups: PortalNavGroup[] = cfg.groups ?? (cfg.nav ? [{ items: cfg.nav }] : []);
   return (
     <div className="flex h-full flex-col bg-[#13151a] text-slate-300">
       <div className="flex h-16 items-center gap-3 border-b border-white/[0.06] px-5">
@@ -40,23 +65,55 @@ function Sidebar({ cfg, onNavigate }: { cfg: PortalConfig; onNavigate?: () => vo
           <p className="text-[11px] text-slate-400">{cfg.title}</p>
         </div>
       </div>
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4" aria-label={cfg.title}>
-        {cfg.nav.map(({ href, label, icon: Icon, exact }) => {
-          const active = exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onNavigate}
-              aria-current={active ? "page" : undefined}
-              className={cn("relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition", active ? "bg-white/[0.08] text-white" : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100")}
-            >
-              {active && <span className="absolute -left-3 bottom-2 top-2 w-[3px] rounded-r bg-gold-400" />}
-              <Icon className="h-[18px] w-[18px]" />
-              {label}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4" aria-label={cfg.title}>
+        {groups.map((group, gi) => (
+          <div key={group.label ?? gi} className="space-y-0.5">
+            {group.label && (
+              <p className="px-3 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                {group.label}
+              </p>
+            )}
+            {group.items.map(({ href, label, icon: Icon, exact, matchPrefixes, children }) => {
+              const active = isRouteActive(pathname, href, exact, matchPrefixes);
+              return (
+                <div key={href}>
+                  <Link
+                    href={href}
+                    onClick={onNavigate}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
+                      active ? "bg-white/[0.08] text-white" : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100",
+                    )}
+                  >
+                    {active && <span className="absolute -left-3 bottom-2 top-2 w-[3px] rounded-r bg-gold-400" />}
+                    <Icon className="h-[18px] w-[18px] shrink-0" />
+                    <span className="truncate">{label}</span>
+                  </Link>
+                  {children && active && (
+                    <ul className="mb-1 ml-[26px] mt-0.5 space-y-0.5 border-l border-white/[0.08] pl-3">
+                      {children.map((c) => {
+                        const on = isRouteActive(pathname, c.href, c.exact);
+                        return (
+                          <li key={c.href}>
+                            <Link
+                              href={c.href}
+                              onClick={onNavigate}
+                              aria-current={on ? "page" : undefined}
+                              className={cn("block rounded-md px-2.5 py-1.5 text-[13px] transition", on ? "text-gold-300" : "text-slate-500 hover:text-slate-200")}
+                            >
+                              {c.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </nav>
       <div className="space-y-2 border-t border-white/[0.06] p-4">
         {cfg.extra && (
@@ -76,6 +133,7 @@ export function PortalShell({ cfg, children }: { cfg: PortalConfig; children: Re
   const pathname = usePathname();
   const { ready, current, logout } = useAccess();
   const [drawer, setDrawer] = useState(false);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     if (!ready) return;
@@ -130,6 +188,17 @@ export function PortalShell({ cfg, children }: { cfg: PortalConfig; children: Re
               ))}
             </nav>
             <div className="ml-auto flex items-center gap-3">
+              {cfg.searchHref && (
+                <form
+                  className="hidden w-64 md:block"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    router.push(`${cfg.searchHref}${q.trim() ? `?q=${encodeURIComponent(q.trim())}` : ""}`);
+                  }}
+                >
+                  <SearchInput value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search users by name, email or ID" aria-label="Search users" />
+                </form>
+              )}
               {current.role === "master" && (
                 <span className="flex items-center gap-2 rounded-lg bg-gold-50 px-3 py-1.5 text-[13px] font-semibold tabular-nums text-gold-700 ring-1 ring-gold-500/30" title="Your available coins">
                   <Coins className="h-4 w-4" /> {formatPoints(current.balance)}

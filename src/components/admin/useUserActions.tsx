@@ -10,7 +10,7 @@ import { useDemoData } from "@/data/provider";
 import type { UserRecord } from "@/data/types";
 
 /** Shared edit / activate / deactivate / block / unblock behaviour for the users table and details page. */
-export function useUserActions(): {
+export function useUserActions(basePath = "/super-admin"): {
   itemsFor: (u: UserRecord, opts?: { includeView?: boolean }) => MenuItem[];
   dialogs: ReactNode;
   edit: (u: UserRecord) => void;
@@ -31,7 +31,7 @@ export function useUserActions(): {
 
   const itemsFor = (u: UserRecord, opts: { includeView?: boolean } = { includeView: true }): MenuItem[] => {
     const items: MenuItem[] = [];
-    if (opts.includeView !== false) items.push({ label: "View details", icon: <Eye />, onSelect: () => router.push(`/admin/users/${u.id}`) });
+    if (opts.includeView !== false) items.push({ label: "View details", icon: <Eye />, onSelect: () => router.push(`${basePath}/users/${u.id}`) });
     items.push({ label: "Edit profile", icon: <Pencil />, onSelect: () => setEditing(u.id) });
     if (u.status === "blocked") {
       items.push({ label: "Unblock account", icon: <CheckCircle2 />, onSelect: () => setStatusWithToast(u, "active"), divider: true });
