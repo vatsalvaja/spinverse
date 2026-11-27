@@ -92,7 +92,7 @@ export function PortalShell({ cfg, children }: { cfg: PortalConfig; children: Re
   }, [cfg.role, ready, current, diagDecision, pathname]);
 
   if (!ready || !current || current.role !== cfg.role) {
-    return <div className="ad-root flex min-h-screen items-center justify-center text-sm text-slate-500">Checking session…</div>;
+    return <div className="sv-admin-root flex min-h-screen items-center justify-center text-sm text-slate-500">Checking session…</div>;
   }
 
   const parts = pathname.split("/").filter(Boolean);
@@ -103,49 +103,49 @@ export function PortalShell({ cfg, children }: { cfg: PortalConfig; children: Re
   };
 
   return (
-    <div className="ad-root min-h-screen">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] lg:block"><Sidebar cfg={cfg} /></aside>
+      <div className="sv-admin-root min-h-screen">
+        <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] lg:block"><Sidebar cfg={cfg} /></aside>
 
-      <AnimatePresence>
-        {drawer && (
-          <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <button className="absolute inset-0 bg-slate-900/60" aria-label="Close menu" onClick={() => setDrawer(false)} />
-            <motion.div initial={{ x: -260 }} animate={{ x: 0 }} exit={{ x: -260 }} transition={{ duration: 0.2 }} className="absolute inset-y-0 left-0 w-[260px]">
-              <Sidebar cfg={cfg} onNavigate={() => setDrawer(false)} />
-              <button onClick={() => setDrawer(false)} aria-label="Close" className="absolute right-3 top-4 rounded-md p-1.5 text-slate-400 hover:text-white"><X className="h-4 w-4" /></button>
+        <AnimatePresence>
+          {drawer && (
+            <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <button className="absolute inset-0 bg-slate-900/60" aria-label="Close menu" onClick={() => setDrawer(false)} />
+              <motion.div initial={{ x: -260 }} animate={{ x: 0 }} exit={{ x: -260 }} transition={{ duration: 0.2 }} className="absolute inset-y-0 left-0 w-[260px]">
+                <Sidebar cfg={cfg} onNavigate={() => setDrawer(false)} />
+                <button onClick={() => setDrawer(false)} aria-label="Close" className="absolute right-3 top-4 rounded-md p-1.5 text-slate-400 hover:text-white"><X className="h-4 w-4" /></button>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
 
-      <div className="lg:pl-[248px]">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
-          <button className="rounded-lg p-2 text-slate-600 ring-1 ring-slate-200 lg:hidden" onClick={() => setDrawer(true)} aria-label="Open navigation"><MenuIcon className="h-5 w-5" /></button>
-          <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-sm text-slate-500 md:flex">
-            {crumbs.map((c, i) => (
-              <span key={c.href} className="flex items-center gap-1.5">
-                {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-slate-300" />}
-                {i === crumbs.length - 1 ? <span className="font-medium text-slate-900">{c.label}</span> : <Link href={c.href} className="hover:text-slate-900">{c.label}</Link>}
-              </span>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-3">
-            {current.role === "master" && (
-              <span className="flex items-center gap-2 rounded-lg bg-gold-50 px-3 py-1.5 text-[13px] font-semibold tabular-nums text-gold-700 ring-1 ring-gold-500/30" title="Your available coins">
-                <Coins className="h-4 w-4" /> {formatPoints(current.balance)}
-                <span className="hidden font-medium sm:inline">available</span>
-              </span>
-            )}
-            <Menu
-              label="Account menu"
-              triggerClassName="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-slate-50"
-              trigger={<><Avatar name={current.name} tone="light" size={30} /><span className="hidden text-left text-[13px] leading-tight sm:block"><b className="block font-semibold text-slate-900">{current.name}</b><span className="text-slate-500">{ROLE_LABEL[current.role]}</span></span></>}
-              items={[{ label: "Sign out", icon: <LogOut />, tone: "danger", onSelect: signOut }]}
-            />
-          </div>
-        </header>
-        <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+        <div className="lg:pl-[248px]">
+          <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
+            <button className="rounded-lg p-2 text-slate-600 ring-1 ring-slate-200 lg:hidden" onClick={() => setDrawer(true)} aria-label="Open navigation"><MenuIcon className="h-5 w-5" /></button>
+            <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-sm text-slate-500 md:flex">
+              {crumbs.map((c, i) => (
+                <span key={c.href} className="flex items-center gap-1.5">
+                  {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-slate-300" />}
+                  {i === crumbs.length - 1 ? <span className="font-medium text-slate-900">{c.label}</span> : <Link href={c.href} className="hover:text-slate-900">{c.label}</Link>}
+                </span>
+              ))}
+            </nav>
+            <div className="ml-auto flex items-center gap-3">
+              {current.role === "master" && (
+                <span className="flex items-center gap-2 rounded-lg bg-gold-50 px-3 py-1.5 text-[13px] font-semibold tabular-nums text-gold-700 ring-1 ring-gold-500/30" title="Your available coins">
+                  <Coins className="h-4 w-4" /> {formatPoints(current.balance)}
+                  <span className="hidden font-medium sm:inline">available</span>
+                </span>
+              )}
+              <Menu
+                label="Account menu"
+                triggerClassName="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-slate-50"
+                trigger={<><Avatar name={current.name} tone="light" size={30} /><span className="hidden text-left text-[13px] leading-tight sm:block"><b className="block font-semibold text-slate-900">{current.name}</b><span className="text-slate-500">{ROLE_LABEL[current.role]}</span></span></>}
+                items={[{ label: "Sign out", icon: <LogOut />, tone: "danger", onSelect: signOut }]}
+              />
+            </div>
+          </header>
+          <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+        </div>
       </div>
-    </div>
-  );
+      );
 }

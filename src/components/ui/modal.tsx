@@ -34,7 +34,7 @@ export function Modal({ open, onClose, title, description, children, footer, the
     <AnimatePresence>
       {open && (
         <motion.div
-          className={cn("fixed inset-0 z-[90] flex items-end justify-center p-0 sm:items-center sm:p-4", light && "ad-root !bg-transparent")}
+          className={cn("fixed inset-0 z-[90] flex items-end justify-center p-0 sm:items-center sm:p-4", light && "sv-admin-root !bg-transparent")}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

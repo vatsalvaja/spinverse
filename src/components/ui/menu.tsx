@@ -75,7 +75,7 @@ export function Menu({
             style={{ top: pos.top, left: pos.left, width: 208, transform: pos.flip ? "translateY(-100%)" : undefined }}
             className={cn(
               "fixed z-[95] overflow-hidden rounded-xl p-1 text-sm",
-              dark ? "sv-glass !rounded-2xl !bg-obsidian-900/90 text-obsidian-100" : "ad-root !bg-white border border-slate-200 text-slate-700 shadow-pop",
+              dark ? "sv-glass !rounded-2xl !bg-obsidian-900/90 text-obsidian-100" : "sv-admin-root !bg-white border border-slate-200 text-slate-700 shadow-pop",
             )}
           >
             {items.map((item, i) => (

@@ -21,7 +21,7 @@ let log: Entry[] = [];
 function persist() {
   try {
     sessionStorage.setItem(LOG_KEY, JSON.stringify(log.slice(-MAX)));
-  } catch {}
+  } catch { }
 }
 
 export function svDiag(stage: string, info?: Record<string, unknown>) {
@@ -43,7 +43,7 @@ function report() {
     .filter((r) => (r as PerformanceResourceTiming & { responseStatus?: number }).responseStatus && (r as PerformanceResourceTiming & { responseStatus?: number }).responseStatus! >= 400)
     .map((r) => ({ url: r.name.replace(location.origin, ""), status: (r as PerformanceResourceTiming & { responseStatus?: number }).responseStatus }));
   const scripts = [...document.scripts].map((s) => s.src).filter(Boolean).map((s) => s.replace(location.origin, ""));
-  const root = q(".ad-root") as HTMLElement | null;
+  const root = q(".sv-admin-root") as HTMLElement | null;
   const main = q("main");
   const style = (el: Element | null) => {
     if (!el) return null;
@@ -51,7 +51,7 @@ function report() {
     const r = (el as HTMLElement).getBoundingClientRect();
     return { display: s.display, visibility: s.visibility, opacity: s.opacity, color: s.color, background: s.backgroundColor, width: Math.round(r.width), height: Math.round(r.height) };
   };
-  // the .ad-root element and every ancestor: inline style, [hidden] and computed display (finds what hides the portal)
+  // the .sv-admin-root element and every ancestor: inline style, [hidden] and computed display (finds what hides the portal)
   const chain = (el: Element | null) => {
     const out: Record<string, unknown>[] = [];
     for (let n = el as HTMLElement | null; n && out.length < 10; n = n.parentElement) {
@@ -65,7 +65,7 @@ function report() {
     const d = JSON.parse(localStorage.getItem("sv-access-data-v1") || "null");
     accounts = d && Array.isArray(d.accounts) ? d.accounts.length : null;
     storedAuth = sessionStorage.getItem("sv-access-auth-v1") ?? localStorage.getItem("sv-access-auth-v1");
-  } catch {}
+  } catch { }
   const text = document.body.innerText || "";
   return JSON.stringify(
     {
@@ -88,7 +88,7 @@ function report() {
         showsLoginForm: !!q('input[type="password"]'),
         adRootStyle: style(root),
         adRootChain: chain(root),
-        allAdRoots: [...document.querySelectorAll(".ad-root")].map((e) => ({ inlineStyle: e.getAttribute("style"), hiddenAttr: e.hasAttribute("hidden"), display: getComputedStyle(e).display, parent: e.parentElement?.tagName.toLowerCase() })),
+        allAdRoots: [...document.querySelectorAll(".sv-admin-root")].map((e) => ({ inlineStyle: e.getAttribute("style"), hiddenAttr: e.hasAttribute("hidden"), display: getComputedStyle(e).display, parent: e.parentElement?.tagName.toLowerCase() })),
         htmlInlineStyle: document.documentElement.getAttribute("style"),
         htmlClass: document.documentElement.getAttribute("class"),
         bodyInlineStyle: document.body.getAttribute("style"),
@@ -112,7 +112,7 @@ function init() {
       sessionStorage.removeItem(LOG_KEY);
     }
     enabled = localStorage.getItem(FLAG) === "1";
-  } catch {}
+  } catch { }
   if (!enabled) return;
 
   try {
@@ -144,10 +144,10 @@ function init() {
   }
   window.addEventListener("pagehide", () => svDiag("pagehide", { path: location.pathname }));
 
-  // who hides the portal: log any style/hidden/class change on <html>, <body>, .ad-root or an ancestor of .ad-root
+  // who hides the portal: log any style/hidden/class change on <html>, <body>, .sv-admin-root or an ancestor of .sv-admin-root
   const watched = (el: Element) => {
     if (el === document.documentElement || el === document.body) return true;
-    const r = document.querySelector(".ad-root");
+    const r = document.querySelector(".sv-admin-root");
     return !!r && (el === r || el.contains(r));
   };
   try {
@@ -158,23 +158,23 @@ function init() {
         svDiag("attr-change", { el: el.tagName.toLowerCase() + (el.className ? "." + String(el.className).split(" ")[0] : ""), attr: m.attributeName, from: m.oldValue, to: el.getAttribute(m.attributeName || ""), display: getComputedStyle(el).display });
       }
     }).observe(document.documentElement, { subtree: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "class"] });
-  } catch {}
+  } catch { }
   // React hides a suspended boundary with style.setProperty("display","none","important"): record who called it
   try {
     const orig = CSSStyleDeclaration.prototype.setProperty;
     CSSStyleDeclaration.prototype.setProperty = function (this: CSSStyleDeclaration, prop: string, value: string | null, priority?: string) {
       if (prop === "display" && value === "none") {
         let hit = false;
-        for (let n = document.querySelector(".ad-root") as HTMLElement | null; n; n = n.parentElement) if (n.style === this) hit = true;
+        for (let n = document.querySelector(".sv-admin-root") as HTMLElement | null; n; n = n.parentElement) if (n.style === this) hit = true;
         if (hit) svDiag("set-display-none", { priority: priority || "", stack: (new Error().stack || "").split("\n").slice(1, 8).map((l) => l.trim().replace(location.origin, "")) });
       }
       return orig.call(this, prop, value as string, priority);
     };
-  } catch {}
+  } catch { }
   // plain visibility check shortly after every page load
   for (const ms of [1000, 3000, 6000]) {
     setTimeout(() => {
-      const r = document.querySelector(".ad-root") as HTMLElement | null;
+      const r = document.querySelector(".sv-admin-root") as HTMLElement | null;
       if (r) svDiag("ad-root-check", { afterMs: ms, display: getComputedStyle(r).display, inlineStyle: r.getAttribute("style"), hiddenAttr: r.hasAttribute("hidden"), width: Math.round(r.getBoundingClientRect().width) });
     }, ms);
   }

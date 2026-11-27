@@ -110,7 +110,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, [adminReady, adminSignedIn, router]);
 
   if (!adminReady || !adminSignedIn) {
-    return <div className="ad-root flex min-h-screen items-center justify-center text-sm text-slate-500">Checking session…</div>;
+    return <div className="sv-admin-root flex min-h-screen items-center justify-center text-sm text-slate-500">Checking session…</div>;
   }
 
   const parts = pathname.split("/").filter(Boolean);
@@ -122,7 +122,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="ad-root min-h-screen">
+    <div className="sv-admin-root min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] lg:block"><Sidebar /></aside>
 
       <AnimatePresence>
